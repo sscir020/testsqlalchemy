@@ -20,3 +20,7 @@ def login_user_in():
     # return "invalid"
     return render_template('login_form.html',form=form)
 
+@ctr.route('/registration')
+def register():
+    return "reg"
+
