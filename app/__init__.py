@@ -1,18 +1,14 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from flask import Blueprint
+from config import config
 
 db=SQLAlchemy()
 bootstrap=Bootstrap()
-def create_app():
+def create_app(config_name):
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:testdb1@localhost:3306/testdb1?charset=utf8'
-    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-    app.config['SECRET_KEY'] = 'hard to guess string'
-
-
-
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
     # from .ctr import ctr as ctr_blueprint
     # app.register_blueprint(ctr_blueprint)
