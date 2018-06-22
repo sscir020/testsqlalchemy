@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div>
+ <table>
+     {% for entry in join_oprs %}
+     <tr>
+         <td>{{entry.opr_id}}</td>
+         <td>{{entry.user_name}}</td>
+         <td>{{entry.diff}}</td>
+         <td>{{entry.material_name}}</td>
+     </tr>
+     {% endfor %}
+    </table>
+
+</div>
+{% endblock %}

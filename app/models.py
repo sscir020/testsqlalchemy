@@ -6,7 +6,7 @@ class User(db.Model):
     user_id=db.Column(db.Integer,nullable=False,primary_key=True)
     user_name=db.Column(db.String(64),nullable=False, unique=True, index=True)
     user_pass = db.Column(db.String(64),nullable=False)
-
+    oprs = db.relationship('Opr', backref='users', lazy='dynamic')
     # def __init__(self,**kwargs):
     #     # self.user_name=username
     #     # self.user_pass=userpass
@@ -29,14 +29,19 @@ class Material(db.Model):
     material_id=db.Column(db.Integer,nullable=False,primary_key=True)
     material_name=db.Column(db.String(64),nullable=False, unique=True, index=True)
     countnum=db.Column(db.Integer,nullable=False)
+    oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
     def change_countnum(self,diff):
         self.countnum+=diff
-        if(self.countnum<0):
-            return False
         db.session.add(self)
         db.session.commit()
         return True
+
+    def isvalid_opr(self,diff):
+        if( self.countnum+diff < 0):
+            return False
+        return True
+
     def prt(self):
         print(self.material_id, self.material_name, self.countnum)
 

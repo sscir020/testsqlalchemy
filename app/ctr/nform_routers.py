@@ -1,6 +1,7 @@
 from flask import render_template,url_for,redirect,flash,session
 from ..models import Opr,Material,User
 from . import ctr
+from ..__init__ import db
 
 
 
@@ -11,12 +12,20 @@ def welcome_user():
     return render_template('welcome.html')
 
 
-@ctr.route('/material_list')
+@ctr.route('/materials_list')
 def show_materials():
     if session['userid']!=None:
         return render_template('material_table.html',materials=Material.query.all())
     return url_for('ctr.log_user_in')
 
+
+@ctr.route('/join_oprs_list')
+def show_join_oprs():
+    if session['userid']!=None:
+        sql1=db.session.query(Opr).outerjoin(User,User.user_id==Opr.user_id).all()
+        print(sql1[0])
+        return render_template('join_oprs_table.html',join_oprs=sql1)
+    return url_for('ctr.log_user_in')
 
 #
 # @ctr.route('/logout')

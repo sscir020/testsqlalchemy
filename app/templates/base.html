@@ -13,19 +13,20 @@
 <nav class="navbar navbar-default" role="navigation">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="{{url_for('ctr.welcome_user')}}">Welcome</a>
+			<a class="navbar-brand" href="#">Inventory</a>
 		</div>
 		<div>
 			<ul class="nav navbar-nav">
+				<li class="active"><a href="{{url_for('ctr.welcome_user')}}">Welcome
 				{% if session['userid']!= None %}
-				<li class="active"><a href="#">{{session['username']}}</a></li>
+				{{session['username']}}</a></li>
 				{% else %}
-				<li class="active"><a href="#">User</a></li>
+				User</a></li>
 				{% endif %}
 				<li><a href="{{url_for('ctr.log_user_in')}}">Login</a></li>
 				<li><a href="{{url_for('ctr.register')}}">Register</a></li>
 				<li><a href="{{url_for('ctr.show_materials')}}">Materials</a></li>
-
+				<li><a href="{{url_for('ctr.show_join_oprs')}}">JoinOperations</a></li>
 			</ul>
 		</div>
 	</div>
