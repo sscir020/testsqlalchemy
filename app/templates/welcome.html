@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-<div>welcome user</div>
+{% if session['userid']!= None %}
+<h1>welcome {{session['username']}}</h1>
+{% else %}
+<h1>welcome user</h1>
+{% endif %}
 {% endblock %}
