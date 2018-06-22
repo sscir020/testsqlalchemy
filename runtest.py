@@ -7,5 +7,4 @@ def run_tests():
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 if __name__=='__main__':
-    app = create_app()
     run_tests()

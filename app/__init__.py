@@ -15,4 +15,5 @@ def create_app():
     from .ctr import ctr as ctr_blurprint
     app.register_blueprint(ctr_blurprint)
 
+
     return app

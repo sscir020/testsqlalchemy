@@ -19,6 +19,7 @@ create table oprs(
 		user_id int not null,
 		material_id int not null,
 		diff int not null,
+--		timestamp datetime default current_timestamp,
 		primary key (opr_id),
 		foreign key (user_id) references users(user_id),
 		foreign key (material_id) references materials(material_id)
