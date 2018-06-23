@@ -34,7 +34,7 @@ insert into materials(material_name,countnum) values('orange',30);
 insert into materials(material_name,countnum) values('banana',25);
 insert into materials(material_name,countnum) values('strawberry',35);
 
-insert into oprs(user_id,material_id,diff) values (2,1,10);
-insert into oprs(user_id,material_id,diff) values (1,3,-5);
-insert into oprs(user_id,material_id,diff) values (3,4,5);
-insert into oprs(user_id,material_id,diff) values (2,2,-10);
+insert into oprs(user_id,material_id,diff) values (2,1,20);
+insert into oprs(user_id,material_id,diff) values (1,3,25);
+insert into oprs(user_id,material_id,diff) values (3,4,35);
+insert into oprs(user_id,material_id,diff) values (2,2,30);
