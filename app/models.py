@@ -68,6 +68,7 @@ class Opr(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     diff=db.Column(db.Integer,nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
+    # type = db.Column(db.Integer,nullable=False)
     # timestamp =db.Column(db.DateTime,index=True,nullable=False)
 
     def prt(self):

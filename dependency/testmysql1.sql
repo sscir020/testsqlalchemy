@@ -33,6 +33,18 @@ insert into materials(material_name,countnum) values('apple',20);
 insert into materials(material_name,countnum) values('orange',30);
 insert into materials(material_name,countnum) values('banana',25);
 insert into materials(material_name,countnum) values('strawberry',35);
+insert into materials(material_name,countnum) values('apple1',20);
+insert into materials(material_name,countnum) values('orange1',30);
+insert into materials(material_name,countnum) values('banana1',25);
+insert into materials(material_name,countnum) values('strawberry1',35);
+insert into materials(material_name,countnum) values('apple2',20);
+insert into materials(material_name,countnum) values('orange2',30);
+insert into materials(material_name,countnum) values('banana2',25);
+insert into materials(material_name,countnum) values('strawberry2',35);
+insert into materials(material_name,countnum) values('apple3',20);
+insert into materials(material_name,countnum) values('orange3',30);
+insert into materials(material_name,countnum) values('banana3',25);
+insert into materials(material_name,countnum) values('strawberry3',35);
 
 insert into oprs(user_id,material_id,diff) values (2,1,20);
 insert into oprs(user_id,material_id,diff) values (1,3,25);

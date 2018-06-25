@@ -36,3 +36,14 @@ config = {
 
     'default': DevelopmentConfig
 }
+from enum import Enum
+class oprtype(Enum):
+    INITADD = 1
+    ADD = 2
+    REDUCE = 3
+
+oprtype = {
+    oprtype.INITADD:'initadd',
+    oprtype.ADD:'add',
+    oprtype.REDUCE:'reduce'
+}

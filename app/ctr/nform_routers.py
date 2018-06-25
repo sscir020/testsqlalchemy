@@ -15,7 +15,7 @@ def welcome_user():
 @ctr.route('/materials_list')
 @loggedin_required
 def show_materials():
-    print(session)
+    # print(session)
     # if session.get['userid'] is not None:
     return render_template('material_table.html',materials=Material.query.all())
     # return url_for('ctr.log_user_in')
@@ -25,8 +25,10 @@ def show_materials():
 @loggedin_required
 def show_join_oprs():
     # if session['userid']!=None:
-    sql1=db.session.query(Opr).join(User,User.user_id==Opr.user_id).all()
-    print(sql1[0].opr_id)
+    # sql1=db.session.query(Opr.opr_id,Opr.diff,User.user_name).join(User,User.user_id==Opr.user_id).all()
+    sql1 = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name).join(User, User.user_id == Opr.user_id)\
+        .join(Material,Material.material_id==Opr.material_id).all()
+    print(sql1[0])
     return render_template('join_oprs_table.html',join_oprs=sql1)
     # return url_for('ctr.log_user_in')
 
