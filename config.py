@@ -5,7 +5,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FLASK_PER_PAGE = 5
+    FLASK_NUM_PER_PAGE = 4
     SESSION_PERMANENT = True
     SESSION_KEY_PREFIX='session'
 

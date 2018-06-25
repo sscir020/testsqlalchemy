@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 
 {% block page_content %}
 <div>
@@ -14,6 +15,13 @@
     </table>
     <div><a href="{{url_for('ctr.add_material')}}">add new material</a></div>
 </div>
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, 'ctr.show_materials') }}
+</div>
+{% endif %}
 {% endblock %}
 
 

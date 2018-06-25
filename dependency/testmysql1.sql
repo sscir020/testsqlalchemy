@@ -50,3 +50,16 @@ insert into oprs(user_id,material_id,diff) values (2,1,20);
 insert into oprs(user_id,material_id,diff) values (1,3,25);
 insert into oprs(user_id,material_id,diff) values (3,4,35);
 insert into oprs(user_id,material_id,diff) values (2,2,30);
+
+insert into oprs(user_id,material_id,diff) values (2,1,20);
+insert into oprs(user_id,material_id,diff) values (1,3,25);
+insert into oprs(user_id,material_id,diff) values (3,4,35);
+insert into oprs(user_id,material_id,diff) values (2,2,30);
+insert into oprs(user_id,material_id,diff) values (2,1,20);
+insert into oprs(user_id,material_id,diff) values (1,3,25);
+insert into oprs(user_id,material_id,diff) values (3,4,35);
+insert into oprs(user_id,material_id,diff) values (2,2,30);
+insert into oprs(user_id,material_id,diff) values (2,1,20);
+insert into oprs(user_id,material_id,diff) values (1,3,25);
+insert into oprs(user_id,material_id,diff) values (3,4,35);
+insert into oprs(user_id,material_id,diff) values (2,2,30);
