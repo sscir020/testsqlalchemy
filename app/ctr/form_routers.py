@@ -4,6 +4,7 @@ from .forms import EditOprForm,AddOprForm,LoginForm,RegistrationForm
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
+from ..decorators import loggedin_required
 
 @ctr.route('/login', methods=['GET', 'POST'])
 def log_user_in():
@@ -17,17 +18,17 @@ def log_user_in():
             flash("incorrect password")
             return redirect(url_for('ctr.log_user_in'))
         else:
-            login_user(user)
-            next = request.args.get('next')
-            if next is None or not next.startswith('/'):
-                return redirect(url_for('ctr.welcome_user'))
-
-            # session['userid'] = user.user_id
-            # session['username'] = user.user_name
-            # session['userpass'] = user.user_pass
-
+            # login_user(user)
+            # next = request.args.get('next')
+            # if next is None or not next.startswith('/'):
+            #     return redirect(url_for('ctr.welcome_user'))
+            # print(session)
+            session['userid'] = user.user_id
+            session['username'] = user.user_name
+            session['userpass'] = user.user_pass
+            return redirect(url_for('ctr.welcome_user'))
     else:
-        flash("Please login")
+        flash("Need login")
     return render_template('login_form.html',form=form)
 
 @ctr.route('/registration', methods=['GET', 'POST'])
@@ -43,14 +44,14 @@ def register():
         else:
             flash('account existed')
     else:
-        flash('Please register')
+        flash('Need register')
     return render_template('registration_form.html',form=form)
 
 
 
 
 @ctr.route('/_add_opr', methods=['GET', 'POST'])
-@login_required
+@loggedin_required
 def add_material():
     form=AddOprForm()
     if form.validate_on_submit():
@@ -71,12 +72,12 @@ def add_material():
         #     flash('Your need logged in')
         #     return redirect(url_for('ctr.login_user_in'))
     else:
-        flash('Please add')
+        flash('Need add')
     return render_template("_edit_opr_form.html", form=form)
 
 
 @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
-@login_required
+@loggedin_required
 def change_countnum(materialid):
     form=EditOprForm()
     if form.validate_on_submit():
@@ -94,7 +95,7 @@ def change_countnum(materialid):
         # else:
         #     return redirect(url_for('ctr.login_user_in'))
     else:
-        flash('Please enter amount')
+        flash('Need enter amount')
     return render_template("_edit_opr_form.html", form=form)
 # @ctr.route('/change-password', methods=['GET', 'POST'])
 # @login_required

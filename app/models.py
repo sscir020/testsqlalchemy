@@ -1,5 +1,6 @@
 from .__init__ import db
 from datetime import datetime
+# from flask_login import UserMixin, AnonymousUserMixin
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -24,6 +25,19 @@ class User(db.Model):
     def prt(self):
         print(self.user_id,self.user_name,self.user_pass)
 
+
+    def is_authenticated(self):
+        return True
+    def is_active(self):  # line 37
+        return True
+    def is_anonymous(self):
+        return False
+    def get(self):
+        return self.user_id
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.user_name
+
 class Material(db.Model):
     __tablename__ = 'materials'
     material_id=db.Column(db.Integer,nullable=False,primary_key=True)
@@ -45,6 +59,9 @@ class Material(db.Model):
     def prt(self):
         print(self.material_id, self.material_name, self.countnum)
 
+
+
+
 class Opr(db.Model):
     __tablename__ = 'oprs'
     opr_id = db.Column(db.Integer,nullable=False, primary_key=True)
@@ -57,3 +74,15 @@ class Opr(db.Model):
         print(self.opr_id,self.user_id, self.diff, self.material_id)
 
 
+# class AnonymousUser(AnonymousUserMixin):
+#     def can(self, permissions):
+#         return False
+#
+#     def is_administrator(self):
+#         return False
+#
+# login_manager.anonymous_user = AnonymousUser
+#
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
