@@ -5,6 +5,8 @@ from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
+from config import oprenum,Oprenum
+import datetime
 
 @ctr.route('/login', methods=['GET', 'POST'])
 def log_user_in():
@@ -61,7 +63,7 @@ def add_material():
             db.session.add(m)
             db.session.commit()
             m= Material.query.filter_by(material_name=form.materialname.data).first()
-            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'])
+            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=oprenum[Oprenum.INITADD])
             db.session.add(o)
             db.session.commit()
             flash('Your material has been added')
@@ -84,10 +86,12 @@ def change_countnum(materialid):
         # if session['userid'] != None:
         m=Material.query.filter_by(material_id=materialid).first()
         if m.isvalid_opr(form.diff.data):
-            m.change_countnum(form.diff.data)
-            o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'])
+            oprtype =oprenum[Oprenum.INCREASE] if form.diff.data>0 else oprenum[Oprenum.DECREASE]
+            o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
+                  momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
+            m.change_countnum(form.diff.data)
             flash('Your material amount has been updated')
             return redirect(url_for('ctr.show_materials'))
         else:

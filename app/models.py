@@ -25,19 +25,6 @@ class User(db.Model):
     def prt(self):
         print(self.user_id,self.user_name,self.user_pass)
 
-
-    def is_authenticated(self):
-        return True
-    def is_active(self):  # line 37
-        return True
-    def is_anonymous(self):
-        return False
-    def get(self):
-        return self.user_id
-    # Required for administrative interface
-    def __unicode__(self):
-        return self.user_name
-
 class Material(db.Model):
     __tablename__ = 'materials'
     material_id=db.Column(db.Integer,nullable=False,primary_key=True)
@@ -68,8 +55,8 @@ class Opr(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     diff=db.Column(db.Integer,nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
-    # type = db.Column(db.Integer,nullable=False)
-    # timestamp =db.Column(db.DateTime,index=True,nullable=False)
+    oprtype =  db.Column(db.String(8),nullable=False )
+    momentary =db.Column(db.DateTime,index=True)
 
     def prt(self):
         print(self.opr_id,self.user_id, self.diff, self.material_id)

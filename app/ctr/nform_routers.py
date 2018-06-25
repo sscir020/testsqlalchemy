@@ -13,6 +13,19 @@ def welcome_user():
     return render_template('welcome.html')
 
 
+@ctr.route('/logout')
+@loggedin_required
+def log_user_out():
+    # logout_user()
+    # print(session)
+    session.pop('userid',None)
+    session.pop('username', None)
+    session.pop('userpass', None)
+    flash("You are logged out")
+    return redirect(url_for('ctr.welcome_user'))
+
+
+
 @ctr.route('/materials_list')
 @loggedin_required
 def show_materials():
@@ -33,7 +46,7 @@ def show_materials():
 def show_join_oprs():
     # if session['userid']!=None:
     # sql1=db.session.query(Opr.opr_id,Opr.diff,User.user_name).join(User,User.user_id==Opr.user_id).all()
-    sql = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name).join(User, User.user_id == Opr.user_id)\
+    sql = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name,Opr.oprtype,Opr.momentary).join(User, User.user_id == Opr.user_id)\
         .join(Material,Material.material_id==Opr.material_id).order_by(Opr.opr_id.desc())
     page = request.args.get('page', 1, type=int)
     pagination = sql.paginate(page, per_page=current_app.config['FLASK_NUM_PER_PAGE'], error_out=False)
@@ -42,20 +55,6 @@ def show_join_oprs():
     return render_template('join_oprs_table.html',join_oprs=join_oprs,pagination=pagination)
     # return url_for('ctr.log_user_in')
 
-@ctr.route('/logout')
-@loggedin_required
-def log_user_out():
-    # logout_user()
-    # print(session)
-    session.pop('userid',None)
-    session.pop('username', None)
-    session.pop('userpass', None)
-    flash("You are logged out")
-    return redirect(url_for('ctr.welcome_user'))
 
-# def url_for_other_page(page):
-#     args = request.view_args.copy()
-#     args['page']=page
-#     return url_for(request.endpoint, **args)
-# app.jinja_env.globals['url_for_other_page']=url_for_other_page
+
 

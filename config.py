@@ -21,12 +21,11 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:1234@localhost:3306/testdb1?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:Aosien2016@120.76.207.142:3306/osen?charset=utf8'
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:Aosien2016@120.76.207.142:3306/osen?charset=utf8'
 
 
 config = {
@@ -37,13 +36,13 @@ config = {
     'default': DevelopmentConfig
 }
 from enum import Enum
-class oprtype(Enum):
+class Oprenum(Enum):
     INITADD = 1
-    ADD = 2
-    REDUCE = 3
+    INCREASE = 2
+    DECREASE = 3
 
-oprtype = {
-    oprtype.INITADD:'initadd',
-    oprtype.ADD:'add',
-    oprtype.REDUCE:'reduce'
+oprenum = {
+    Oprenum.INITADD:'initadd',
+    Oprenum.INCREASE:'increase',
+    Oprenum.DECREASE:'decrease'
 }

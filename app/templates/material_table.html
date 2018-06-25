@@ -3,7 +3,12 @@
 
 {% block page_content %}
 <div>
- <table>
+ <table class="tableattr">
+     <thead>
+         <th>材料ID</th>
+         <th>材料名</th>
+         <th>数量</th>
+     </thead>
      {% for entry in materials %}
      <tr>
          <td>{{entry.material_id}}</td>

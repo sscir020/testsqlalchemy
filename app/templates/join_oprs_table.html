@@ -3,15 +3,25 @@
 
 {% block page_content %}
 <div>
- <table>
-     {% for entry in join_oprs %}
-     <tr>
-         <td>{{entry.opr_id}}</td>
-         <td>{{entry.user_name}}</td>
-         <td>{{entry.diff}}</td>
-         <td>{{entry.material_name}}</td>
-     </tr>
-     {% endfor %}
+    <table class="tableattr">
+         <thead>
+             <th>操作ID</th>
+             <th>用户名</th>
+             <th>操作数量</th>
+             <th>材料名</th>
+             <th>操作类型</th>
+             <th>时间</th>
+         </thead>
+         {% for entry in join_oprs %}
+         <tr>
+             <td>{{entry.opr_id}}</td>
+             <td>{{entry.user_name}}</td>
+             <td>{{entry.diff}}</td>
+             <td>{{entry.material_name}}</td>
+             <td>{{entry.oprtype}}</td>
+             <td>{{entry.momentary}}</td>
+         </tr>
+         {% endfor %}
     </table>
 </div>
 
