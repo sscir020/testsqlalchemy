@@ -4,6 +4,7 @@ create table users(
 		user_id int not null auto_increment,
 		user_name varchar(64) not null,
 		user_pass varchar(64) not null,
+		role int not null default 1 ,
 		primary key (user_id),
 		unique(user_name)
 		);
@@ -11,16 +12,18 @@ create table materials(
 		material_id int not null auto_increment,
 		material_name varchar(64) not null,
 		countnum int not null,
+		reworknum int not null default 0,
 		primary key (material_id),
 		unique(material_name)
 		);
+
 create table oprs(
 		opr_id int not null auto_increment,
 		user_id int not null,
 		material_id int not null,
 		diff int not null,
 		oprtype varchar(8) not null,
-		momentary datetime default current_timestamp,
+		momentary datetime not null default current_timestamp,
 		primary key (opr_id),
 		foreign key (user_id) references users(user_id),
 		foreign key (material_id) references materials(material_id)

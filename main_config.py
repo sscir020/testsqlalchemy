@@ -9,7 +9,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FLASK_NUM_PER_PAGE = 10
+    FLASK_NUM_PER_PAGE = 8
     SESSION_PERMANENT = True
     SESSION_KEY_PREFIX='session'
 
@@ -42,15 +42,15 @@ config = {
 from enum import Enum
 class Oprenum(Enum):
     INITADD = 1
-    INCREASE = 2
-    DECREASE = 3
+    INBOUND = 2
+    OUTBOUND = 3
     REWORK = 4
     DELIVERY =5
 
 oprenum = {
-    Oprenum.INITADD:'添加',
-    Oprenum.INCREASE:'入库',
-    Oprenum.DECREASE:'出库',
-    Oprenum.REWORK:'返修',
-    Oprenum.DELIVERY:'送返'
+    Oprenum.INITADD:'新添加',
+    Oprenum.INBOUND:'入库',
+    Oprenum.OUTBOUND:'出库',
+    Oprenum.REWORK:'返修入库',
+    Oprenum.DELIVERY:'返修出库'
 }

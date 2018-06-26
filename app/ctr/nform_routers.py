@@ -30,7 +30,6 @@ def log_user_out():
 @loggedin_required
 def show_materials():
     # print(session)
-    # if session.get['userid'] is not None:
     page = request.args.get('page',1,type=int)
     pagination = Material.query.order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
@@ -38,13 +37,22 @@ def show_materials():
     print(pagination==None)
     return render_template('material_table.html',materials=materials,pagination=pagination )
     # return render_template('material_table.html',materials=Material.query.all())
-    # return url_for('ctr.log_user_in')
 
+@ctr.route('/rework_materials_list')
+@loggedin_required
+def show_rework_materials():
+    # print(session)
+    page = request.args.get('page',1,type=int)
+    pagination = Material.query.filter(Material.reworknum>0).order_by(Material.material_id.desc()).\
+        paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
+    materials=pagination.items
+    print(pagination==None)
+    return render_template('rework_material_table.html',materials=materials,pagination=pagination )
+    # return render_template('material_table.html',materials=Material.query.all())
 
 @ctr.route('/join_oprs_list')
 @loggedin_required
 def show_join_oprs():
-    # if session['userid']!=None:
     # sql1=db.session.query(Opr.opr_id,Opr.diff,User.user_name).join(User,User.user_id==Opr.user_id).all()
     sql = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name,Opr.oprtype,Opr.momentary).join(User, User.user_id == Opr.user_id)\
         .join(Material,Material.material_id==Opr.material_id).order_by(Opr.opr_id.desc())
@@ -53,7 +61,7 @@ def show_join_oprs():
     join_oprs=pagination.items
     # print(sql[0])
     return render_template('join_oprs_table.html',join_oprs=join_oprs,pagination=pagination)
-    # return url_for('ctr.log_user_in')
+
 
 
 

@@ -14,12 +14,11 @@
      <tr>
          <td>{{entry.material_id}}</td>
          <td>{{entry.material_name}}</td>
-         <td>{{entry.countnum}}<a href="{{ url_for('ctr.change_countnum',materialid=entry.material_id) }}">出入库</a></td>
-         <td>{{entry.reworknum}}<a href="{{ url_for('ctr.change_reworknum',materialid=entry.material_id) }}">返修出入库</a></td>
+         <td>{{entry.countnum}}</td>
+         <td>{{entry.reworknum}}</td>
      </tr>
      {% endfor %}
     </table>
-    <div><a href="{{url_for('ctr.add_material')}}">添加新库存</a></div>
 </div>
 
 

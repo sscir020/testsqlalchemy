@@ -30,10 +30,17 @@ class Material(db.Model):
     material_id=db.Column(db.Integer,nullable=False,primary_key=True)
     material_name=db.Column(db.String(64),nullable=False, unique=True, index=True)
     countnum=db.Column(db.Integer,nullable=False)
+    reworknum=db.Column(db.Integer,nullable=False,default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
     def change_countnum(self,diff):
         self.countnum+=diff
+        db.session.add(self)
+        db.session.commit()
+        return True
+
+    def change_reworknum(self,diff):
+        self.reworknum+=diff
         db.session.add(self)
         db.session.commit()
         return True
@@ -43,24 +50,26 @@ class Material(db.Model):
             return False
         return True
 
+    def isvalid_rework_opr(self,diff):
+        if self.reworknum+diff <0:
+            return False
+        return True
+
     def prt(self):
-        print(self.material_id, self.material_name, self.countnum)
-
-
+        print(self.material_id, self.material_name, self.countnum,self.reworknum)
 
 
 class Opr(db.Model):
     __tablename__ = 'oprs'
-    opr_id = db.Column(db.Integer,nullable=False, primary_key=True)
+    opr_id = db.Column(db.Integer, nullable=False, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    diff=db.Column(db.Integer,nullable=False)
+    diff = db.Column(db.Integer, nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
-    oprtype =  db.Column(db.String(8),nullable=False )
-    momentary =db.Column(db.DateTime,index=True)
+    oprtype = db.Column(db.String(8), nullable=False)
+    momentary = db.Column(db.DateTime, index=True)
 
     def prt(self):
-        print(self.opr_id,self.user_id, self.diff, self.material_id)
-
+        print(self.opr_id, self.user_id, self.diff, self.material_id)
 
 # class AnonymousUser(AnonymousUserMixin):
 #     def can(self, permissions):

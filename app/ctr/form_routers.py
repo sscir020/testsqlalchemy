@@ -1,6 +1,6 @@
 from flask import render_template,url_for,redirect,flash,session,request
-from flask_login import login_user,logout_user,current_user,login_required
-from .forms import EditOprForm,AddOprForm,LoginForm,RegistrationForm
+# from flask_login import login_user,logout_user,current_user,login_required
+from .forms import LoginForm,RegistrationForm,AddOprForm,EditOprForm,EditReworkOprForm
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
@@ -84,10 +84,9 @@ def add_material():
 def change_countnum(materialid):
     form=EditOprForm()
     if form.validate_on_submit():
-        # if session['userid'] != None:
         m=Material.query.filter_by(material_id=materialid).first()
         if m.isvalid_opr(form.diff.data):
-            oprtype =oprenum[Oprenum.INCREASE] if form.diff.data>0 else oprenum[Oprenum.DECREASE]
+            oprtype =oprenum[Oprenum.INBOUND] if form.diff.data>0 else oprenum[Oprenum.OUTBOUND]
             o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
                   momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
@@ -97,11 +96,33 @@ def change_countnum(materialid):
             return redirect(url_for('ctr.show_materials'))
         else:
             flash("Incorrect amount")
-        # else:
-        #     return redirect(url_for('ctr.login_user_in'))
     else:
         flash('Need enter amount')
     return render_template("_edit_opr_form.html", form=form)
+
+
+@ctr.route('/_edit_rework_opr/<materialid>', methods=['GET', 'POST'])
+@loggedin_required
+def change_reworknum(materialid):
+    form=EditReworkOprForm()
+    if form.validate_on_submit():
+        m=Material.query.filter_by(material_id=materialid).first()
+        if m.isvalid_rework_opr(form.diff.data):
+            oprtype =oprenum[Oprenum.REWORK] if form.diff.data>0 else oprenum[Oprenum.DELIVERY]
+            o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
+                  momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
+            db.session.add(o)
+            db.session.commit()
+            m.change_reworknum(form.diff.data)
+            flash('Your rework amount has been updated')
+            return redirect(url_for('ctr.show_materials'))
+        else:
+            flash("Incorrect amount")
+    else:
+        flash('Need enter amount')
+    return render_template("_edit_opr_form.html", form=form)
+
+
 # @ctr.route('/change-password', methods=['GET', 'POST'])
 # @login_required
 # def change_password():
