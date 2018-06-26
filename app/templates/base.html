@@ -4,9 +4,10 @@
 {% block head %}
 	<meta charset="utf-8">
 	<title>Inventory System</title>
-	<link rel="stylesheet" type="text/css" href="..\app\tablelook.css"  >
-	<!--@import url(./dependency/tablelook.css)-->
 	{{ super() }}
+	<link rel="stylesheet" type="text/css" href="static/css/tablelook.css"  >
+	<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
 {% endblock %}
 
 {% block navbar %}
