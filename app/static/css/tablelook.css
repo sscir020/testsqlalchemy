@@ -22,8 +22,8 @@
 	border-radius: 10px;
 	color:#F0E9E6;
 }
-#tableattr tr.alt td 
+a
 {
-	color:#000000;
-	background-color:#EAF2D3;
+	color:#7FB56E;
+	font-weight:bold;
 }
