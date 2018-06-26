@@ -1,10 +1,10 @@
 from flask import render_template,url_for,redirect,flash,session,request,current_app
-from flask_login import login_user,logout_user,login_required,current_user
+# from flask_login import login_user,logout_user,login_required,current_user
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
-
+from main_config import oprenumCH
 
 @ctr.route('/')
 @ctr.route('/welcome')
@@ -21,7 +21,7 @@ def log_user_out():
     session.pop('userid',None)
     session.pop('username', None)
     session.pop('userpass', None)
-    flash("You are logged out")
+    flash("登出成功")
     return redirect(url_for('ctr.welcome_user'))
 
 
@@ -30,6 +30,7 @@ def log_user_out():
 @loggedin_required
 def show_materials():
     # print(session)
+    flash('库存列表')
     page = request.args.get('page',1,type=int)
     pagination = Material.query.order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
@@ -42,6 +43,7 @@ def show_materials():
 @loggedin_required
 def show_rework_materials():
     # print(session)
+    flash('返修库存列表')
     page = request.args.get('page',1,type=int)
     pagination = Material.query.filter(Material.reworknum>0).order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
@@ -53,6 +55,7 @@ def show_rework_materials():
 @ctr.route('/join_oprs_list')
 @loggedin_required
 def show_join_oprs():
+    flash('操作记录')
     # sql1=db.session.query(Opr.opr_id,Opr.diff,User.user_name).join(User,User.user_id==Opr.user_id).all()
     sql = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name,Opr.oprtype,Opr.momentary).join(User, User.user_id == Opr.user_id)\
         .join(Material,Material.material_id==Opr.material_id).order_by(Opr.opr_id.desc())
@@ -60,7 +63,7 @@ def show_join_oprs():
     pagination = sql.paginate(page, per_page=current_app.config['FLASK_NUM_PER_PAGE'], error_out=False)
     join_oprs=pagination.items
     # print(sql[0])
-    return render_template('join_oprs_table.html',join_oprs=join_oprs,pagination=pagination)
+    return render_template('join_oprs_table.html',join_oprs=join_oprs,pagination=pagination,oprenumCH=oprenumCH)
 
 
 

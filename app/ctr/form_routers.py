@@ -14,10 +14,10 @@ def log_user_in():
     if form.validate_on_submit():
         user=User.query.filter_by(user_name=form.username.data).first()
         if user == None:
-            flash("no such user ")
+            flash("用户不存在")
             return redirect(url_for('ctr.log_user_in'))
         elif not user.verify_pass(password=form.userpass.data):
-            flash("incorrect password")
+            flash("密码不正确")
             return redirect(url_for('ctr.log_user_in'))
         else:
             # login_user(user)
@@ -28,9 +28,10 @@ def log_user_in():
             session['userid'] = user.user_id
             session['username'] = user.user_name
             session['userpass'] = user.user_pass
+            flash("登录成功")
             return redirect(url_for('ctr.welcome_user'))
     else:
-        flash("Need login")
+        flash("需要登录")
     return render_template('login_form.html',form=form)
 
 @ctr.route('/registration', methods=['GET', 'POST'])
@@ -41,12 +42,12 @@ def register():
             u=User(user_name=form.username.data,user_pass=form.userpass.data)
             db.session.add(u)
             db.session.commit()
-            flash('account created')
+            flash('账户创建成功')
             return redirect(url_for('ctr.log_user_in'))
         else:
-            flash('account existed')
+            flash('账户已存在')
     else:
-        flash('Need register')
+        flash('需要注册')
     return render_template('registration_form.html',form=form)
 
 
@@ -67,15 +68,15 @@ def add_material():
                     momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
-            flash('Your material has been added')
+            flash('新材料添加成功')
             return redirect(url_for('ctr.show_materials'))
         else:
-            flash('Your material existed')
+            flash('材料名已存在')
         # else:
         #     flash('Your need logged in')
         #     return redirect(url_for('ctr.login_user_in'))
     else:
-        flash('Need add')
+        flash('需要添加新材料')
     return render_template("_edit_opr_form.html", form=form)
 
 
@@ -92,12 +93,12 @@ def change_countnum(materialid):
             db.session.add(o)
             db.session.commit()
             m.change_countnum(form.diff.data)
-            flash('Your material amount has been updated')
+            flash('材料数量更新成功')
             return redirect(url_for('ctr.show_materials'))
         else:
-            flash("Incorrect amount")
+            flash("减少的数量超标")
     else:
-        flash('Need enter amount')
+        flash('需要填写数量')
     return render_template("_edit_opr_form.html", form=form)
 
 
@@ -114,12 +115,12 @@ def change_reworknum(materialid):
             db.session.add(o)
             db.session.commit()
             m.change_reworknum(form.diff.data)
-            flash('Your rework amount has been updated')
+            flash('返修数量更新成功')
             return redirect(url_for('ctr.show_materials'))
         else:
-            flash("Incorrect amount")
+            flash("减少的数量超标")
     else:
-        flash('Need enter amount')
+        flash('需要填写数量')
     return render_template("_edit_opr_form.html", form=form)
 
 

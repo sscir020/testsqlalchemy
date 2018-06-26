@@ -22,7 +22,7 @@ create table oprs(
 		user_id int not null,
 		material_id int not null,
 		diff int not null,
-		oprtype varchar(8) not null,
+		oprtype int not null,
 		momentary datetime not null default current_timestamp,
 		primary key (opr_id),
 		foreign key (user_id) references users(user_id),
@@ -50,20 +50,20 @@ insert into materials(material_name,countnum) values('orange3',30);
 insert into materials(material_name,countnum) values('banana3',25);
 insert into materials(material_name,countnum) values('strawberry3',35);
 
-insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"initadd");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"INITADD");
 
-insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"initadd");
-insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"initadd");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,1,20,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (1,3,25,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (3,4,35,"INITADD");
+insert into oprs(user_id,material_id,diff,oprtype) values (2,2,30,"INITADD");

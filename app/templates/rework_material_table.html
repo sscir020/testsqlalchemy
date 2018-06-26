@@ -3,21 +3,22 @@
 
 {% block page_content %}
 <div>
- <table class="tableattr">
-     <thead>
-         <th>材料ID</th>
-         <th>材料名</th>
-         <th>数量</th>
-         <th>返修数量</th>
-     </thead>
-     {% for entry in materials %}
-     <tr>
-         <td>{{entry.material_id}}</td>
-         <td>{{entry.material_name}}</td>
-         <td>{{entry.countnum}}</td>
-         <td>{{entry.reworknum}}</td>
-     </tr>
-     {% endfor %}
+    <!--<h1>返修库存列表</h1>-->
+    <table class="tableattr">
+         <thead>
+             <th>库存ID</th>
+             <th>库存名</th>
+             <th>数量</th>
+             <th>返修数量</th>
+         </thead>
+         {% for entry in materials %}
+         <tr>
+             <td>{{entry.material_id}}</td>
+             <td>{{entry.material_name}}</td>
+             <td>{{entry.countnum}}</td>
+             <td>{{entry.reworknum}}</td>
+         </tr>
+         {% endfor %}
     </table>
 </div>
 

@@ -48,9 +48,17 @@ class Oprenum(Enum):
     DELIVERY =5
 
 oprenum = {
-    Oprenum.INITADD:'新添加',
-    Oprenum.INBOUND:'入库',
-    Oprenum.OUTBOUND:'出库',
-    Oprenum.REWORK:'返修入库',
-    Oprenum.DELIVERY:'返修出库'
+    Oprenum.INITADD:'INITADD',
+    Oprenum.INBOUND:'INBOUND',
+    Oprenum.OUTBOUND:'OUTBOUND',
+    Oprenum.REWORK:'REWORK',
+    Oprenum.DELIVERY:'DELIVERY'
+}
+
+oprenumCH ={
+    'INITADD': '新添加',
+    'INBOUND': '入库',
+    'OUTBOUND': '出库',
+    'REWORK': '返修入库',
+    'DELIVERY': '返修出库'
 }

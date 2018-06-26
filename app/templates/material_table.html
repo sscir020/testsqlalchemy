@@ -3,21 +3,22 @@
 
 {% block page_content %}
 <div>
- <table class="tableattr">
-     <thead>
-         <th>材料ID</th>
-         <th>材料名</th>
-         <th>数量</th>
-         <th>返修数量</th>
-     </thead>
-     {% for entry in materials %}
-     <tr>
-         <td>{{entry.material_id}}</td>
-         <td>{{entry.material_name}}</td>
-         <td>{{entry.countnum}}<a href="{{ url_for('ctr.change_countnum',materialid=entry.material_id) }}">出入库</a></td>
-         <td>{{entry.reworknum}}<a href="{{ url_for('ctr.change_reworknum',materialid=entry.material_id) }}">返修出入库</a></td>
-     </tr>
-     {% endfor %}
+    <!--<h1>库存列表</h1>-->
+    <table class="tableattr">
+         <thead>
+             <th>库存ID</th>
+             <th>库存名</th>
+             <th>数量</th>
+             <th>返修数量</th>
+         </thead>
+         {% for entry in materials %}
+         <tr>
+             <td>{{entry.material_id}}</td>
+             <td>{{entry.material_name}}</td>
+             <td>{{entry.countnum}}<a href="{{ url_for('ctr.change_countnum',materialid=entry.material_id) }}">出入库</a></td>
+             <td>{{entry.reworknum}}<a href="{{ url_for('ctr.change_reworknum',materialid=entry.material_id) }}">返修出入库</a></td>
+         </tr>
+         {% endfor %}
     </table>
     <div><a href="{{url_for('ctr.add_material')}}">添加新库存</a></div>
 </div>
