@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,IntegerField,SubmitField
+from wtforms import StringField,IntegerField,PasswordField,SubmitField
 from wtforms.validators import DataRequired,EqualTo
 
 class EditOprForm(FlaskForm):
@@ -13,12 +13,12 @@ class AddOprForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username=StringField("type your eng_name",validators=[DataRequired()])
-    userpass=StringField("type your password",validators=[DataRequired(),EqualTo('userpass2',message='password must be the same')])
-    userpass2 = StringField("confirm your password", validators=[DataRequired()])
+    userpass=PasswordField("type your password",validators=[DataRequired(),EqualTo('userpass2',message='password must be the same')])
+    userpass2 = PasswordField("confirm your password", validators=[DataRequired()])
     submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):
     username = StringField('type your eng_name',validators=[DataRequired()])
-    userpass = StringField('type your password', validators=[DataRequired()])
+    userpass = PasswordField('type your password', validators=[DataRequired()])
     submit = SubmitField('Login')
 

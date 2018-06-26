@@ -5,7 +5,7 @@ from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
-from config import oprenum,Oprenum
+from main_config import oprenum,Oprenum
 import datetime
 
 @ctr.route('/login', methods=['GET', 'POST'])
@@ -63,7 +63,8 @@ def add_material():
             db.session.add(m)
             db.session.commit()
             m= Material.query.filter_by(material_name=form.materialname.data).first()
-            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=oprenum[Oprenum.INITADD])
+            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=oprenum[Oprenum.INITADD], \
+                    momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
             flash('Your material has been added')
