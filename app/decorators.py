@@ -12,7 +12,7 @@ def loggedin_required(f):
         # print('userid' in session)
         if ('userid'in session):
             return f(*args, **kwargs)
-        flash("need login")
+        flash("需要先登录")
         return redirect(url_for('ctr.log_user_in'))
 
     return decorated_function

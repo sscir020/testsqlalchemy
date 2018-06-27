@@ -43,7 +43,7 @@ def show_materials():
 @loggedin_required
 def show_rework_materials():
     # print(session)
-    flash('返修库存列表')
+    flash('返修列表')
     page = request.args.get('page',1,type=int)
     pagination = Material.query.filter(Material.reworknum>0).order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)

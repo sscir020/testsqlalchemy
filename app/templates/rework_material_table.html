@@ -4,19 +4,21 @@
 {% block page_content %}
 <div>
     <!--<h1>返修库存列表</h1>-->
-    <table class="table table-striped" id="tableattr">
+    <table class="table table-hover" id="tableattr"><!--table-condensed-->
          <thead>
              <th>库存ID</th>
              <th>库存名</th>
-             <th>数量</th>
-             <th>返修数量</th>
+             <th>返修中数量</th>
+             <th>库存数量</th>
+             <th>总数</th>
          </thead>
          {% for entry in materials %}
          <tr>
              <td>{{entry.material_id}}</td>
              <td>{{entry.material_name}}</td>
-             <td>{{entry.countnum}}</td>
              <td>{{entry.reworknum}}</td>
+             <td>{{entry.countnum}}</td>
+             <td>{{entry.reworknum+entry.countnum}}</td>
          </tr>
          {% endfor %}
     </table>

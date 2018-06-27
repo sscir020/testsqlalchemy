@@ -1,6 +1,6 @@
 from flask import render_template,url_for,redirect,flash,session,request
 # from flask_login import login_user,logout_user,current_user,login_required
-from .forms import LoginForm,RegistrationForm,AddOprForm,EditOprForm,EditReworkOprForm
+from .forms import LoginForm,AddOprForm,EditOprForm,EditReworkOprForm #RegistrationForm
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
@@ -33,24 +33,6 @@ def log_user_in():
     else:
         flash("需要登录")
     return render_template('login_form.html',form=form)
-
-@ctr.route('/registration', methods=['GET', 'POST'])
-def register():
-    form=RegistrationForm()
-    if form.validate_on_submit():
-        if User.query.filter_by(user_name=form.username.data).first() == None:
-            u=User(user_name=form.username.data,user_pass=form.userpass.data)
-            db.session.add(u)
-            db.session.commit()
-            flash('账户创建成功')
-            return redirect(url_for('ctr.log_user_in'))
-        else:
-            flash('账户已存在')
-    else:
-        flash('需要注册')
-    return render_template('registration_form.html',form=form)
-
-
 
 
 @ctr.route('/_add_opr', methods=['GET', 'POST'])
@@ -92,7 +74,7 @@ def change_countnum(materialid):
                   momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
-            m.change_countnum(form.diff.data)
+            m.material_change_countnum(form.diff.data)
             flash('材料数量更新成功')
             return redirect(url_for('ctr.show_materials'))
         else:
@@ -109,20 +91,37 @@ def change_reworknum(materialid):
     if form.validate_on_submit():
         m=Material.query.filter_by(material_id=materialid).first()
         if m.isvalid_rework_opr(form.diff.data):
-            oprtype =oprenum[Oprenum.REWORK] if form.diff.data>0 else oprenum[Oprenum.DELIVERY]
+            oprtype =oprenum[Oprenum.RESTORE] if form.diff.data>0 else oprenum[Oprenum.REWORKING]
             o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
                   momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
-            m.change_reworknum(form.diff.data)
+            m.material_change_reworknum(form.diff.data)
             flash('返修数量更新成功')
             return redirect(url_for('ctr.show_materials'))
         else:
-            flash("减少的数量超标")
+            flash("减少或增加的数量超标")
     else:
         flash('需要填写数量')
     return render_template("_edit_opr_form.html", form=form)
 
+
+
+# @ctr.route('/registration', methods=['GET', 'POST'])
+# def register():
+#     form=RegistrationForm()
+#     if form.validate_on_submit():
+#         if User.query.filter_by(user_name=form.username.data).first() == None:
+#             u=User(user_name=form.username.data,user_pass=form.userpass.data)
+#             db.session.add(u)
+#             db.session.commit()
+#             flash('账户创建成功')
+#             return redirect(url_for('ctr.log_user_in'))
+#         else:
+#             flash('账户已存在')
+#     else:
+#         flash('需要注册')
+#     return render_template('registration_form.html',form=form)
 
 # @ctr.route('/change-password', methods=['GET', 'POST'])
 # @login_required

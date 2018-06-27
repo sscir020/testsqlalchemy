@@ -6,10 +6,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # sys.setdefaultencoding('utf8')
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or '1AR4bnTnLHZyHaKt'
+    SQLALCHEMY_POOL_SIZE = 100
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FLASK_NUM_PER_PAGE = 8
+    FLASK_NUM_PER_PAGE = 10
+#SESSION_TYPE= 'redis'
     SESSION_PERMANENT = True
     SESSION_KEY_PREFIX='session'
 
@@ -44,21 +46,21 @@ class Oprenum(Enum):
     INITADD = 1
     INBOUND = 2
     OUTBOUND = 3
-    REWORK = 4
-    DELIVERY =5
+    REWORKING = 4
+    RESTORE =5
 
 oprenum = {
     Oprenum.INITADD:'INITADD',
     Oprenum.INBOUND:'INBOUND',
     Oprenum.OUTBOUND:'OUTBOUND',
-    Oprenum.REWORK:'REWORK',
-    Oprenum.DELIVERY:'DELIVERY'
+    Oprenum.REWORKING:'REWORKING',
+    Oprenum.RESTORE:'RESTORE'
 }
 
 oprenumCH ={
-    'INITADD': '新添加',
+    'INITADD': '新入库',
     'INBOUND': '入库',
     'OUTBOUND': '出库',
-    'REWORK': '返修入库',
-    'DELIVERY': '返修出库'
+    'REWORKING': '返修中',
+    'RESTORE': '返修入库'
 }

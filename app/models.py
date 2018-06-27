@@ -33,25 +33,32 @@ class Material(db.Model):
     reworknum=db.Column(db.Integer,nullable=False,default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
-    def change_countnum(self,diff):
+    def material_change_countnum(self,diff):
         self.countnum+=diff
         db.session.add(self)
         db.session.commit()
         return True
 
-    def change_reworknum(self,diff):
-        self.reworknum+=diff
+    def material_change_reworknum(self,diff):
+        self.countnum  += diff
+        self.reworknum -= diff
         db.session.add(self)
         db.session.commit()
         return True
 
     def isvalid_opr(self,diff):
-        if( self.countnum+diff < 0):
+        if diff==0:
+            return False
+        if self.countnum+diff < 0:
             return False
         return True
 
     def isvalid_rework_opr(self,diff):
-        if self.reworknum+diff <0:
+        if diff==0:
+            return False
+        if self.reworknum - diff <0:
+            return False
+        if self.reworknum - diff > self.countnum:
             return False
         return True
 
@@ -65,7 +72,7 @@ class Opr(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     diff = db.Column(db.Integer, nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
-    oprtype = db.Column(db.String(8), nullable=False)
+    oprtype = db.Column(db.String(16), nullable=False)
     momentary = db.Column(db.DateTime, index=True)
 
     def prt(self):
