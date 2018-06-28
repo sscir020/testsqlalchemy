@@ -27,3 +27,18 @@ a
 	color:#7FB56E;
 	font-weight:bold;
 }
+ul li
+{
+float:left
+}
+#numcls1,#numcls2,#numcls3,#numcls4
+{
+width:40px;
+}
+#tr_entry{
+	font-weight:bold;
+}
+#tr_input
+{
+    text-align:right;
+}

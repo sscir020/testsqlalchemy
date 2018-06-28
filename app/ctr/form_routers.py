@@ -1,6 +1,6 @@
 from flask import render_template,url_for,redirect,flash,session,request
 # from flask_login import login_user,logout_user,current_user,login_required
-from .forms import LoginForm,AddOprForm,EditOprForm,EditReworkOprForm #RegistrationForm
+from .forms import LoginForm,AddOprForm #EditOprForm,EditReworkOprForm #RegistrationForm
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
@@ -61,51 +61,118 @@ def add_material():
         flash('需要添加新材料')
     return render_template("_edit_opr_form.html", form=form)
 
+def change_countnum(materialid,diff):
+    m = Material.query.filter_by(material_id=materialid).first()
+    if m.isvalid_opr(diff):
+        oprtype = oprenum[Oprenum.INBOUND] if diff> 0 else oprenum[Oprenum.OUTBOUND]
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+                momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        db.session.add(o)
+        db.session.commit()
+        m.material_change_countnum(diff)
+        return True
+    return False
+
+def convert_str_num(num):
+    if num=='' or num =="":
+        return 0
+    return int(num)
 
 @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
 @loggedin_required
-def change_countnum(materialid):
-    form=EditOprForm()
-    if form.validate_on_submit():
-        m=Material.query.filter_by(material_id=materialid).first()
-        if m.isvalid_opr(form.diff.data):
-            oprtype =oprenum[Oprenum.INBOUND] if form.diff.data>0 else oprenum[Oprenum.OUTBOUND]
-            o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
-                  momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
-            db.session.add(o)
-            db.session.commit()
-            m.material_change_countnum(form.diff.data)
-            flash('材料数量更新成功')
-            return redirect(url_for('ctr.show_materials'))
+def form_change_countnum(materialid):
+    if request.method=="POST":
+        diff1=convert_str_num(request.form["input_inbound"])
+        diff2=convert_str_num(request.form["input_outbound"])
+        if diff1<0 or diff2>0:
+            flash("入库为正数，出库为负数")
         else:
-            flash("减少的数量超标")
-    else:
-        flash('需要填写数量')
-    return render_template("_edit_opr_form.html", form=form)
+            diff=diff1+diff2
+            if diff!=0:
+                if change_countnum(materialid,diff):
+                    flash('材料数量更新成功')
+                else:
+                    flash("减少的数量超标")
+            else:
+                flash('需要填写数量')
+    return redirect(url_for('ctr.show_materials'))
 
+def change_reworknum(materialid,diff):
+    m = Material.query.filter_by(material_id=materialid).first()
+    if m.isvalid_rework_opr(diff):
+        oprtype = oprenum[Oprenum.RESTORE] if diff > 0 else oprenum[Oprenum.REWORKING]
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+                momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        db.session.add(o)
+        db.session.commit()
+        m.material_change_reworknum(diff)
+        return True
+    return False
 
 @ctr.route('/_edit_rework_opr/<materialid>', methods=['GET', 'POST'])
 @loggedin_required
-def change_reworknum(materialid):
-    form=EditReworkOprForm()
-    if form.validate_on_submit():
-        m=Material.query.filter_by(material_id=materialid).first()
-        if m.isvalid_rework_opr(form.diff.data):
-            oprtype =oprenum[Oprenum.RESTORE] if form.diff.data>0 else oprenum[Oprenum.REWORKING]
-            o=Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'],oprtype=oprtype,\
-                  momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
-            db.session.add(o)
-            db.session.commit()
-            m.material_change_reworknum(form.diff.data)
-            flash('返修数量更新成功')
-            return redirect(url_for('ctr.show_materials'))
+def form_change_reworknum(materialid):
+    if request.method=="POST":
+        diff1=convert_str_num(request.form["input_rework"])
+        diff2=convert_str_num(request.form["input_restore"])
+        if diff1<0 or diff2>0:
+            flash("修好为正数，返修为负数")
         else:
-            flash("减少或增加的数量超标")
-    else:
-        flash('需要填写数量')
-    return render_template("_edit_opr_form.html", form=form)
+            diff=diff1+diff2
+            if diff!=0:
+                if change_reworknum(materialid,diff):
+                    flash('返修数量更新成功')
+                else:
+                    flash("减少或增加的数量超标")
+            else:
+                 flash('需要填写数量')
+    return redirect(url_for('ctr.show_materials'))
 
 
+
+
+# @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
+# @loggedin_required
+# def change_countnum(materialid):
+#     form = EditOprForm()
+#     if form.validate_on_submit():
+#         m = Material.query.filter_by(material_id=materialid).first()
+#         if m.isvalid_opr(form.diff.data):
+#             oprtype = oprenum[Oprenum.INBOUND] if form.diff.data > 0 else oprenum[Oprenum.OUTBOUND]
+#             o = Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'], oprtype=oprtype, \
+#                     momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+#             db.session.add(o)
+#             db.session.commit()
+#             m.material_change_countnum(form.diff.data)
+#             flash('材料数量更新成功')
+#
+#         else:
+#             flash("减少的数量超标")
+#     else:
+#         flash('需要填写数量')
+#     return render_template("_edit_opr_form.html", form=form)
+#
+#
+# @ctr.route('/_edit_rework_opr/<materialid>', methods=['GET', 'POST'])
+# @loggedin_required
+# def change_reworknum(materialid):
+#     form = EditReworkOprForm()
+#     if form.validate_on_submit():
+#         m = Material.query.filter_by(material_id=materialid).first()
+#         if m.isvalid_rework_opr(form.diff.data):
+#             oprtype = oprenum[Oprenum.RESTORE] if form.diff.data > 0 else oprenum[Oprenum.REWORKING]
+#             o = Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'], oprtype=oprtype, \
+#                     momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+#             db.session.add(o)
+#             db.session.commit()
+#             m.material_change_reworknum(form.diff.data)
+#             flash('返修数量更新成功')
+#             return redirect(url_for('ctr.show_materials'))
+#         else:
+#             flash("减少或增加的数量超标")
+#     else:
+#         flash('需要填写数量')
+#     return render_template("_edit_opr_form.html", form=form)
 
 # @ctr.route('/registration', methods=['GET', 'POST'])
 # def register():
