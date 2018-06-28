@@ -5,7 +5,8 @@ from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
-from main_config import oprenum,Oprenum
+from main_config import oprenum,Oprenum,Config
+
 import datetime
 
 @ctr.route('/login', methods=['GET', 'POST'])
@@ -61,6 +62,12 @@ def add_material():
         flash('需要添加新材料')
     return render_template("_edit_opr_form.html", form=form)
 
+
+def convert_str_num(num):
+    if num=='' or num =="":
+        return 0
+    return int(num)
+
 def change_countnum(materialid,diff):
     m = Material.query.filter_by(material_id=materialid).first()
     if m.isvalid_opr(diff):
@@ -72,30 +79,6 @@ def change_countnum(materialid,diff):
         m.material_change_countnum(diff)
         return True
     return False
-
-def convert_str_num(num):
-    if num=='' or num =="":
-        return 0
-    return int(num)
-
-@ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
-@loggedin_required
-def form_change_countnum(materialid):
-    if request.method=="POST":
-        diff1=convert_str_num(request.form["input_inbound"])
-        diff2=convert_str_num(request.form["input_outbound"])
-        if diff1<0 or diff2>0:
-            flash("入库为正数，出库为负数")
-        else:
-            diff=diff1+diff2
-            if diff!=0:
-                if change_countnum(materialid,diff):
-                    flash('材料数量更新成功')
-                else:
-                    flash("减少的数量超标")
-            else:
-                flash('需要填写数量')
-    return redirect(url_for('ctr.show_materials'))
 
 def change_reworknum(materialid,diff):
     m = Material.query.filter_by(material_id=materialid).first()
@@ -109,28 +92,76 @@ def change_reworknum(materialid,diff):
         return True
     return False
 
-@ctr.route('/_edit_rework_opr/<materialid>', methods=['GET', 'POST'])
+@ctr.route('/_change_num_opr', methods=['GET', 'POST'])
 @loggedin_required
-def form_change_reworknum(materialid):
+def form_change_num():
     if request.method=="POST":
-        diff1=convert_str_num(request.form["input_rework"])
-        diff2=convert_str_num(request.form["input_restore"])
-        if diff1<0 or diff2>0:
-            flash("修好为正数，返修为负数")
-        else:
-            diff=diff1+diff2
-            if diff!=0:
+        for i in range(1,Config.FLASK_NUM_PER_PAGE):
+            diff=convert_str_num(request.form["input_text_"+str(i)])
+            if diff != 0:
+                materialid=request.form["input_text_" + str(i)].id
+                break
+        if diff != 0:
+            bool1= request.form["input_inbound"].checked
+            bool2 = request.form["input_outbound"].checked
+            bool3 = request.form["input_rework"].checked
+            bool4 = request.form["input_restore"].checked
+            if bool2==True or bool4==True:
+                diff=-diff;
+            if bool1 == True or bool2 == True:
+                if change_countnum(materialid,diff):
+                    flash('库存数量更新成功')
+                else:
+                    flash("减少或增加的数量超标")
+            elif bool3==True or bool4==True:
                 if change_reworknum(materialid,diff):
                     flash('返修数量更新成功')
                 else:
                     flash("减少或增加的数量超标")
             else:
-                 flash('需要填写数量')
+                flash("需要选择操作类型")
+        else:
+            flash('需要填写数量')
     return redirect(url_for('ctr.show_materials'))
 
-
-
-
+# @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
+# @loggedin_required
+# def form_change_countnum(materialid):
+#     if request.method=="POST":
+#         diff1=convert_str_num(request.form["input_inbound"])
+#         diff2=convert_str_num(request.form["input_outbound"])
+#         if diff1<0 or diff2>0:
+#             flash("入库为正数，出库为负数")
+#         else:
+#             diff=diff1+diff2
+#             if diff!=0:
+#                 if change_countnum(materialid,diff):
+#                     flash('材料数量更新成功')
+#                 else:
+#                     flash("减少的数量超标")
+#             else:
+#                 flash('需要填写数量')
+#     return redirect(url_for('ctr.show_materials'))
+#
+# @ctr.route('/_edit_rework_opr/<materialid>', methods=['GET', 'POST'])
+# @loggedin_required
+# def form_change_reworknum(materialid):
+#     if request.method=="POST":
+#         diff1=convert_str_num(request.form["input_rework"])
+#         diff2=convert_str_num(request.form["input_restore"])
+#         if diff1<0 or diff2>0:
+#             flash("修好为正数，返修为负数")
+#         else:
+#             diff=diff1+diff2
+#             if diff!=0:
+#                 if change_reworknum(materialid,diff):
+#                     flash('返修数量更新成功')
+#                 else:
+#                     flash("减少或增加的数量超标")
+#             else:
+#                  flash('需要填写数量')
+#     return redirect(url_for('ctr.show_materials'))
+#
 # @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
 # @loggedin_required
 # def change_countnum(materialid):
@@ -190,8 +221,8 @@ def form_change_reworknum(materialid):
 #         flash('需要注册')
 #     return render_template('registration_form.html',form=form)
 
-# @ctr.route('/change-password', methods=['GET', 'POST'])
-# @login_required
+# @ctr.route('/change_password', methods=['GET', 'POST'])
+# @loggedin_required
 # def change_password():
 #     form = ChangePasswordForm()
 #     if form.validate_on_submit():
