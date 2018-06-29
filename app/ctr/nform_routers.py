@@ -30,7 +30,7 @@ def log_user_out():
 @loggedin_required
 def show_materials():
     # print(session)
-    flash('库存列表_____________________________________________________________________________________________*注意：出库和返修的数量为负数')
+    flash('库存列表')
     page = request.args.get('page',1,type=int)
     pagination = Material.query.order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)

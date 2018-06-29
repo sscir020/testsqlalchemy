@@ -5,7 +5,7 @@ from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
-from main_config import oprenum,Oprenum,Config
+from main_config import Oprenum,Config,Param,params,paramnums
 
 import datetime
 
@@ -47,7 +47,7 @@ def add_material():
             db.session.add(m)
             db.session.commit()
             m= Material.query.filter_by(material_name=form.materialname.data).first()
-            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=oprenum[Oprenum.INITADD], \
+            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=Oprenum.INITADD.name, \
                     momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
             db.session.add(o)
             db.session.commit()
@@ -75,12 +75,30 @@ def change_countnum(materialid,diff):
     elif m.isvalid_opr(diff)==False:
         flash("增加或减少的数量超标")
     else:
-        oprtype = oprenum[Oprenum.INBOUND] if diff> 0 else oprenum[Oprenum.OUTBOUND]
+        oprtype = Oprenum.INBOUND.name if diff > 0 else Oprenum.OUTBOUND.name
+        m.material_change_countnum(diff)
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
+        print(m.paramtype)
+        print(list(params[m.paramtype]))
+        print(len(params[m.paramtype]))
+        print(list(params[m.paramtype])[1])
+        if m.paramtype!= None and m.paramtype!=Param.PARAM_ZERO.name:
+            for i in range(0,len(params[m.paramtype])):
+                print(i)
+                print("************")
+                num = list(paramnums[m.paramtype])[i]
+                materialname=list(params[m.paramtype])[i]
+                print(materialname)
+                if diff < 0:
+                    num = -num
+                m1=Material.query.filter_by(material_name=materialname).first()
+                m1.material_change_countnum(diff=num)
+                o = Opr(material_id=materialid, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                        momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                db.session.add(o)
         db.session.commit()
-        m.material_change_countnum(diff)
         return True
     return False
 
@@ -88,28 +106,29 @@ def change_reworknum(materialid,diff):
     m = Material.query.filter_by(material_id=materialid).first()
     if m==None:
         flash("材料名不存在")
-    elif m.isvalid_opr(diff)==False:
+    elif m.isvalid_rework_opr(diff)==False:
         flash("增加或减少的数量超标")
     else:
-        oprtype = oprenum[Oprenum.RESTORE] if diff > 0 else oprenum[Oprenum.REWORKING]
+        m.material_change_reworknum(diff)
+        oprtype = Oprenum.RESTORE.name if diff > 0 else Oprenum.REWORKING.name
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
         db.session.commit()
-        m.material_change_reworknum(diff)
         return True
     return False
 
 @ctr.route('/_change_num_opr', methods=['GET', 'POST'])
 @loggedin_required
 def form_change_num():
+    materialid=0
     if request.method=="POST":
         for i in range(1,Config.FLASK_NUM_PER_PAGE):
             diff=convert_str_num(request.form["input_text_"+str(i)])
-            if diff != 0:
+            if diff > 0:
                 materialid=request.form["input_hidden_" + str(i)]
                 break
-        if diff != 0:
+        if diff > 0:
             # print(request.form["radio"])
             bool=[False,False,False,False]
             # print("radio" in request.form)
@@ -124,10 +143,12 @@ def form_change_num():
                 elif bool[2]==True or bool[3]==True:
                     if change_reworknum(materialid,diff):
                         flash('返修数量更新成功')
+                else:
+                    flash("需要选择操作类型")
             else:
                 flash("需要选择操作类型")
         else:
-            flash('需要填写数量')
+            flash('需要填写一个正数')
     return redirect(url_for('ctr.show_materials'))
 
 # if "input_inbound" in request.form:

@@ -13,10 +13,10 @@ create table materials(
 		material_name varchar(64) not null,
 		countnum int not null,
 		reworknum int not null default 0,
+		paramtype varchar(32) not null,
 		primary key (material_id),
 		unique(material_name)
 		);
-
 create table oprs(
 		opr_id int not null auto_increment,
 		user_id int not null,

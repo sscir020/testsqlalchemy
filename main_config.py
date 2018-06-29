@@ -49,18 +49,74 @@ class Oprenum(Enum):
     REWORKING = 4
     RESTORE =5
 
-oprenum = {
-    Oprenum.INITADD:'INITADD',
-    Oprenum.INBOUND:'INBOUND',
-    Oprenum.OUTBOUND:'OUTBOUND',
-    Oprenum.REWORKING:'REWORKING',
-    Oprenum.RESTORE:'RESTORE'
-}
 
 oprenumCH ={
-    'INITADD': '新入库',
-    'INBOUND': '入库',
-    'OUTBOUND': '出库',
-    'REWORKING': '返修中',
-    'RESTORE': '返修入库'
+    Oprenum.INITADD.name: '新入库',
+    Oprenum.INBOUND.name: '入库',
+    Oprenum.OUTBOUND.name: '出库',
+    Oprenum.REWORKING.name: '返修中',
+    Oprenum.RESTORE.name: '返修入库'
 }
+
+class Sensorname(Enum):
+    P25 = 1
+    P10 = 2
+    TSP = 3
+    NOISE = 4
+    WINDSPEED = 5
+    WINDDIRECTION = 6
+    TEMP = 7
+    PRESSURE = 8
+    HUMIDITY = 9
+    NEGOXYGEN = 10
+    RAINFALL = 11
+    ILLUM = 12
+    CH2O = 13
+    SO2 = 14
+    NO2 = 15
+    O3 = 16
+    CO = 17
+    CO2 = 18
+    H2S = 19
+    VOC = 20
+    O2 = 21
+    RADIATION = 22
+    NH3 = 23
+    SOILTEMP = 24
+    SOILHUMIDITY = 25
+    PHOTOSYNTHESIS = 26
+    ULTRAVIOLETRAYS = 27
+
+
+class Param(Enum):
+    PARAM_EIGHT = 8
+    PARAM_SEVEN = 7
+    PARAM_FIVE = 5
+    PARAM_THREE = 3
+    PARAM_ZERO = -1
+
+params = {
+    Param.PARAM_EIGHT.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+                             Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name, Sensorname.PRESSURE.name],
+    Param.PARAM_SEVEN.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+                             Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name],
+    Param.PARAM_FIVE.name:  [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name],
+    Param.PARAM_THREE.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name]
+}
+paramnums = {
+    Param.PARAM_EIGHT.name: [1, 1, 1, 1, 1, 1, 1, 1],
+    Param.PARAM_SEVEN.name: [1, 1, 1, 1, 1, 1, 1],
+    Param.PARAM_FIVE.name:  [1, 1, 1, 1, 1],
+    Param.PARAM_THREE.name: [1, 1, 1]
+}
+
+
+
+
+# oprenum = {
+#     Oprenum.INITADD:'INITADD',
+#     Oprenum.INBOUND:'INBOUND',
+#     Oprenum.OUTBOUND:'OUTBOUND',
+#     Oprenum.REWORKING:'REWORKING',
+#     Oprenum.RESTORE:'RESTORE'
+# }

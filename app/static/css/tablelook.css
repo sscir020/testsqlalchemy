@@ -8,7 +8,7 @@
 {
 	font-size:1em;
 	border:1px solid #FF9975;
-	padding:10px 30px 10px 30px;
+	padding:10px 30px 10px 80px;
 	border-radius: 10px;
 	color: #7D7775;
 }
@@ -29,11 +29,12 @@ a
 }
 ul li
 {
-float:left
+
 }
 #numcls1,#numcls2,#numcls3,#numcls4
 {
-width:40px;
+    width:60px;
+    text-align:right;
 }
 #tr_entry{
 	font-weight:bold;

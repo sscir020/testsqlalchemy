@@ -17,10 +17,10 @@ class User(db.Model):
     def verify_pass(self,password):
         return self.user_pass==password
 
-    def change_pass(self,newpass):
-        self.user_pass=newpass
-        db.session.add(self)
-        db.session.commit()
+    # def change_pass(self,newpass):
+    #     self.user_pass=newpass
+    #     db.session.add(self)
+    #     db.session.commit()
 
     def prt(self):
         print(self.user_id,self.user_name,self.user_pass)
@@ -31,19 +31,20 @@ class Material(db.Model):
     material_name=db.Column(db.String(64),nullable=False, unique=True, index=True)
     countnum=db.Column(db.Integer,nullable=False)
     reworknum=db.Column(db.Integer,nullable=False,default=0)
+    paramtype=db.Column(db.String(32),nullable=False,default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
     def material_change_countnum(self,diff):
         self.countnum+=diff
         db.session.add(self)
-        db.session.commit()
+        # db.session.commit()
         return True
 
     def material_change_reworknum(self,diff):
         self.countnum  += diff
         self.reworknum -= diff
         db.session.add(self)
-        db.session.commit()
+        # db.session.commit()
         return True
 
     def isvalid_opr(self,diff):
@@ -72,7 +73,7 @@ class Opr(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     diff = db.Column(db.Integer, nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
-    oprtype = db.Column(db.String(16), nullable=False)
+    oprtype = db.Column(db.String(32), nullable=False)
     momentary = db.Column(db.DateTime, index=True)
 
     def prt(self):

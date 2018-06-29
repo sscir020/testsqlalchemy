@@ -13,10 +13,10 @@
                  <th>库存数量</th>
                  <th>返修中数量</th>
                  <th>
-                    入库<input type="radio" name="radio"  id="select1" checked value="0" >
-                    出库<input type="radio" name="radio"  id="select2" checked value="1" >
-                    修好<input type="radio" name="radio"  id="select3" checked value="2" >
-                    返修<input type="radio" name="radio"  id="select4"  checked value="3" >
+                    <input type="radio" name="radio"  id="select1" checked value="0" aria-checked="false">入库
+                    <input type="radio" name="radio"  id="select2" checked value="1" aria-checked="false">出库
+                    <input type="radio" name="radio"  id="select3" checked value="2" aria-checked="false">修好
+                    <input type="radio" name="radio"  id="select4"  checked value="3" checked=""  >返修
                  </th>
              </thead>
 
@@ -29,7 +29,7 @@
                  <td>{{entry.reworknum}}</td>
                  <td>
                      <input type="hidden" name="input_hidden_{{loop.index}}" value="{{entry.material_id}}">
-                        <input type="text" name="input_text_{{loop.index}}">
+                        <input type="text" name="input_text_{{loop.index}}" id="numcls1">
                         <input name="input_button_{{entry.material_id}}" type="submit" value="操作"></td>
                  <!--href="{{ url_for('ctr.form_change_num',materialid=entry.material_id) }}" -->
              </tr>
