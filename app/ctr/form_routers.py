@@ -60,7 +60,7 @@ def add_material():
         #     return redirect(url_for('ctr.login_user_in'))
     else:
         flash('需要添加新材料')
-    return render_template("_edit_opr_form.html", form=form)
+    return render_template("_add_opr_form.html", form=form)
 
 
 def convert_str_num(num):
@@ -70,7 +70,11 @@ def convert_str_num(num):
 
 def change_countnum(materialid,diff):
     m = Material.query.filter_by(material_id=materialid).first()
-    if m.isvalid_opr(diff):
+    if m==None:
+        flash("材料名不存在")
+    elif m.isvalid_opr(diff)==False:
+        flash("增加或减少的数量超标")
+    else:
         oprtype = oprenum[Oprenum.INBOUND] if diff> 0 else oprenum[Oprenum.OUTBOUND]
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -82,7 +86,11 @@ def change_countnum(materialid,diff):
 
 def change_reworknum(materialid,diff):
     m = Material.query.filter_by(material_id=materialid).first()
-    if m.isvalid_rework_opr(diff):
+    if m==None:
+        flash("材料名不存在")
+    elif m.isvalid_opr(diff)==False:
+        flash("增加或减少的数量超标")
+    else:
         oprtype = oprenum[Oprenum.RESTORE] if diff > 0 else oprenum[Oprenum.REWORKING]
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -99,30 +107,37 @@ def form_change_num():
         for i in range(1,Config.FLASK_NUM_PER_PAGE):
             diff=convert_str_num(request.form["input_text_"+str(i)])
             if diff != 0:
-                materialid=request.form["input_text_" + str(i)].id
+                materialid=request.form["input_hidden_" + str(i)]
                 break
         if diff != 0:
-            bool1= request.form["input_inbound"].checked
-            bool2 = request.form["input_outbound"].checked
-            bool3 = request.form["input_rework"].checked
-            bool4 = request.form["input_restore"].checked
-            if bool2==True or bool4==True:
-                diff=-diff;
-            if bool1 == True or bool2 == True:
-                if change_countnum(materialid,diff):
-                    flash('库存数量更新成功')
-                else:
-                    flash("减少或增加的数量超标")
-            elif bool3==True or bool4==True:
-                if change_reworknum(materialid,diff):
-                    flash('返修数量更新成功')
-                else:
-                    flash("减少或增加的数量超标")
+            # print(request.form["radio"])
+            bool=[False,False,False,False]
+            # print("radio" in request.form)
+            if("radio" in request.form):
+                bool[int(request.form["radio"])]=True
+                # print( bool)
+                if bool[1]==True or bool[3]==True:
+                    diff=-diff;
+                if bool[0]== True or bool[1] == True:
+                    if change_countnum(materialid,diff):
+                        flash('库存数量更新成功')
+                elif bool[2]==True or bool[3]==True:
+                    if change_reworknum(materialid,diff):
+                        flash('返修数量更新成功')
             else:
                 flash("需要选择操作类型")
         else:
             flash('需要填写数量')
     return redirect(url_for('ctr.show_materials'))
+
+# if "input_inbound" in request.form:
+#     bool[0]= request.form["input_inbound"]
+# if "input_outbound" in request.form:
+#     bool[1]= request.form["input_outbound"]
+# if "input_rework" in request.form:
+#     bool[2]= request.form["input_rework"]
+# if "input_restore" in request.form:
+#     bool[3]= request.form["input_restore"]
 
 # @ctr.route('/_edit_opr/<materialid>', methods=['GET', 'POST'])
 # @loggedin_required

@@ -5,10 +5,6 @@
 <div>
     <!--<h1>库存列表</h1>-->
     <form action="{{ url_for('ctr.form_change_num') }}" method="post">
-        入库<input type="radio" name="input_inbound" id="select1">
-        出库<input type="radio" name="input_outbound" id="select2" >
-        修好<input type="radio" name="input_rework" id="select3">
-        返修<input type="radio" name="input_restore"id="select4">
 
         <table class="table table-hover" id="tableattr">
              <thead>
@@ -16,7 +12,12 @@
                  <th>库存名</th>
                  <th>库存数量</th>
                  <th>返修中数量</th>
-                 <th>数量操作</th>
+                 <th>
+                    入库<input type="radio" name="radio"  id="select1" checked value="0" >
+                    出库<input type="radio" name="radio"  id="select2" checked value="1" >
+                    修好<input type="radio" name="radio"  id="select3" checked value="2" >
+                    返修<input type="radio" name="radio"  id="select4"  checked value="3" >
+                 </th>
              </thead>
 
              {% for entry in materials %}
@@ -26,7 +27,8 @@
                  <td>{{entry.material_name}}</td>
                  <td>{{entry.countnum}}</td>
                  <td>{{entry.reworknum}}</td>
-                 <td><input type="hidden" name="input_hidden_{{loop.index}}" value="entry.material_id">
+                 <td>
+                     <input type="hidden" name="input_hidden_{{loop.index}}" value="{{entry.material_id}}">
                         <input type="text" name="input_text_{{loop.index}}">
                         <input name="input_button_{{entry.material_id}}" type="submit" value="操作"></td>
                  <!--href="{{ url_for('ctr.form_change_num',materialid=entry.material_id) }}" -->
