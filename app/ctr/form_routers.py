@@ -80,24 +80,24 @@ def change_countnum(materialid,diff):
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
-        print(m.paramtype)
-        print(list(params[m.paramtype]))
-        print(len(params[m.paramtype]))
-        print(list(params[m.paramtype])[1])
+        # print(m.paramtype)
+        # print(list(params[m.paramtype]))
+        # print(len(params[m.paramtype]))
+        # print(list(params[m.paramtype])[1])
         if m.paramtype!= None and m.paramtype!=Param.PARAM_ZERO.name:
             for i in range(0,len(params[m.paramtype])):
-                print(i)
-                print("************")
                 num = list(paramnums[m.paramtype])[i]
                 materialname=list(params[m.paramtype])[i]
-                print(materialname)
-                if diff < 0:
-                    num = -num
+                num=num*diff
                 m1=Material.query.filter_by(material_name=materialname).first()
-                m1.material_change_countnum(diff=num)
-                o = Opr(material_id=materialid, diff=num, user_id=session['userid'], oprtype=oprtype, \
-                        momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                db.session.add(o)
+                if m1.isvalid_opr(num):
+                    m1.material_change_countnum(diff=num)
+                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                            momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                    db.session.add(o)
+                else:
+                    flash("配件数量不足")
+                    return False
         db.session.commit()
         return True
     return False
@@ -114,6 +114,20 @@ def change_reworknum(materialid,diff):
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
+        if m.paramtype!= None and m.paramtype!=Param.PARAM_ZERO.name:
+            for i in range(0,len(params[m.paramtype])):
+                num = list(paramnums[m.paramtype])[i]
+                materialname=list(params[m.paramtype])[i]
+                num=num*diff
+                m1=Material.query.filter_by(material_name=materialname).first()
+                if m1.isvalid_rework_opr(num):
+                    m1.material_change_reworknum(diff=num)
+                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                            momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                    db.session.add(o)
+                else:
+                    flash("配件数量不足")
+                    return False
         db.session.commit()
         return True
     return False
