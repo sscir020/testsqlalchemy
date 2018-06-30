@@ -9,6 +9,7 @@
              <th>操作ID</th>
              <th>用户名</th>
              <th>操作数量</th>
+             <th>库存ID</th>
              <th>库存名</th>
              <th>操作类型</th>
              <th>操作时间</th>
@@ -18,12 +19,14 @@
              <td>{{entry.opr_id}}</td>
              <td>{{entry.user_name}}</td>
              <td>{{entry.diff}}</td>
+             <td>{{entry.material_id}}</td>
              <td>{{entry.material_name}}</td>
              <td>{{oprenumCH[entry.oprtype]}}</td>
              <td>{{entry.momentary}}</td>
          </tr>
          {% endfor %}
     </table>
+    <a href="{{ url_for('ctr.rollback_opr') }}">回滚一条操作</a>
 </div>
 
 {% if pagination %}

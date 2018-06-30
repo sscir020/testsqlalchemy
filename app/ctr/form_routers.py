@@ -43,7 +43,7 @@ def add_material():
     if form.validate_on_submit():
         # if session['userid'] != None:
         if Material.query.filter_by(material_name=form.materialname.data).first()== None:
-            m=Material(material_name=form.materialname.data, countnum=form.countnum.data)
+            m=Material(material_name=form.materialname.data, countnum=form.countnum.data,paramtype=Param.PARAM_ZERO.name)
             db.session.add(m)
             db.session.commit()
             m= Material.query.filter_by(material_name=form.materialname.data).first()
@@ -137,7 +137,7 @@ def change_reworknum(materialid,diff):
 def form_change_num():
     materialid=0
     if request.method=="POST":
-        for i in range(1,Config.FLASK_NUM_PER_PAGE):
+        for i in range(1,Config.FLASK_NUM_PER_PAGE+1):
             diff=convert_str_num(request.form["input_text_"+str(i)])
             if diff > 0:
                 materialid=request.form["input_hidden_" + str(i)]

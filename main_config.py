@@ -93,7 +93,7 @@ class Param(Enum):
     PARAM_SEVEN = 7
     PARAM_FIVE = 5
     PARAM_THREE = 3
-    PARAM_ZERO = -1
+    PARAM_ZERO = 0
 
 params = {
     Param.PARAM_EIGHT.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,

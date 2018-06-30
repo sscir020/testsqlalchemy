@@ -10,6 +10,7 @@
              <thead>
                  <th>库存ID</th>
                  <th>库存名</th>
+                 <th>参数</th>
                  <th>库存数量</th>
                  <th>返修中数量</th>
                  <th>
@@ -25,6 +26,7 @@
              <tr id="tr_entry">
                  <td>{{entry.material_id}}</td>
                  <td>{{entry.material_name}}</td>
+                 <td>{{Param[entry.paramtype].value}}</td>
                  <td>{{entry.countnum}}</td>
                  <td>{{entry.reworknum}}</td>
                  <td>

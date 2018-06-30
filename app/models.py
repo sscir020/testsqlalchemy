@@ -50,16 +50,19 @@ class Material(db.Model):
     def isvalid_opr(self,diff):
         if diff==0:
             return False
-        if self.countnum+diff < 0:
+        if self.countnum+diff < 0:#出库
             return False
         return True
 
     def isvalid_rework_opr(self,diff):
+        # print("********************")
+        # print(diff)
+        # print("=====================")
         if diff==0:
             return False
-        if self.reworknum - diff <0:
+        if self.reworknum - diff <0:#修好
             return False
-        if self.reworknum - diff > self.countnum:
+        if self.reworknum - diff > self.countnum+self.reworknum:#返修
             return False
         return True
 

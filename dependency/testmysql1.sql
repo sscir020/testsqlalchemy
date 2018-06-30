@@ -13,7 +13,7 @@ create table materials(
 		material_name varchar(64) not null,
 		countnum int not null,
 		reworknum int not null default 0,
-		paramtype varchar(32) not null,
+		paramtype varchar(32) not null default 0,
 		primary key (material_id),
 		unique(material_name)
 		);
