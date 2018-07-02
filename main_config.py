@@ -14,6 +14,7 @@ class Config:
 #SESSION_TYPE= 'redis'
     SESSION_PERMANENT = True
     SESSION_KEY_PREFIX='session'
+    ALARM_LEVEL=0
 
     @staticmethod
     def init_app(app):
@@ -46,18 +47,25 @@ class Oprenum(Enum):
     INITADD = 1
     INBOUND = 2
     OUTBOUND = 3
-    REWORKING = 4
-    RESTORE =5
-
+    RESTORE = 4
+    REWORK = 5
+    BUYING = 6
 
 oprenumCH ={
     Oprenum.INITADD.name: '新入库',
     Oprenum.INBOUND.name: '入库',
     Oprenum.OUTBOUND.name: '出库',
-    Oprenum.REWORKING.name: '返修中',
-    Oprenum.RESTORE.name: '返修入库'
+    Oprenum.RESTORE.name: '修好入库',
+    Oprenum.REWORK.name: '返修中出库',
+    Oprenum.BUYING.name:"购买中"
 }
-
+oprenumNum = {
+    '入库':Oprenum.INBOUND,
+    '出库':Oprenum.OUTBOUND,
+    '修好':Oprenum.RESTORE,
+    '返修':Oprenum.REWORK,
+    '购买':Oprenum.BUYING
+}
 class Sensorname(Enum):
     P25 = 1
     P10 = 2
@@ -113,10 +121,11 @@ paramnums = {
 
 
 
+
 # oprenum = {
 #     Oprenum.INITADD:'INITADD',
 #     Oprenum.INBOUND:'INBOUND',
 #     Oprenum.OUTBOUND:'OUTBOUND',
-#     Oprenum.REWORKING:'REWORKING',
+#     Oprenum.REWORK:'REWORK',
 #     Oprenum.RESTORE:'RESTORE'
 # }

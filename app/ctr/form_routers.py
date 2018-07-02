@@ -1,11 +1,11 @@
 from flask import render_template,url_for,redirect,flash,session,request
 # from flask_login import login_user,logout_user,current_user,login_required
-from .forms import LoginForm,AddOprForm #EditOprForm,EditReworkOprForm #RegistrationForm
+from .forms import LoginForm,AddOprForm#ColorForm#ListForm,OprForm #EditOprForm,EditReworkOprForm #RegistrationForm
 from ..models import Opr,Material,User
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
-from main_config import Oprenum,Config,Param,params,paramnums
+from main_config import Oprenum,Config,Param,params,paramnums,oprenumNum
 
 import datetime
 
@@ -110,7 +110,7 @@ def change_reworknum(materialid,diff):
         flash("增加或减少的数量超标")
     else:
         m.material_change_reworknum(diff)
-        oprtype = Oprenum.RESTORE.name if diff > 0 else Oprenum.REWORKING.name
+        oprtype = Oprenum.RESTORE.name if diff > 0 else Oprenum.REWORK.name
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
@@ -132,9 +132,10 @@ def change_reworknum(materialid,diff):
         return True
     return False
 
-@ctr.route('/_change_num_opr', methods=['GET', 'POST'])
+
+@ctr.route('/_change_num_opr/<page>/<alarm_level>', methods=['GET', 'POST'])
 @loggedin_required
-def form_change_num():
+def form_change_num(page,alarm_level):
     materialid=0
     if request.method=="POST":
         for i in range(1,Config.FLASK_NUM_PER_PAGE+1):
@@ -143,12 +144,14 @@ def form_change_num():
                 materialid=request.form["input_hidden_" + str(i)]
                 break
         if diff > 0:
-            # print(request.form["radio"])
-            bool=[False,False,False,False]
-            # print("radio" in request.form)
-            if("radio" in request.form):
-                bool[int(request.form["radio"])]=True
-                # print( bool)
+
+            bool=[False,False,False,False,False]
+            # arr={"入库":1,"出库":2,"修好":3,"返修":4,"购买":5}
+            if(request.form["input_list_" + str(i)]!=''):
+                print(request.form["input_list_" + str(i)])
+                print (oprenumNum[request.form["input_list_" + str(i)]].value)
+                bool[oprenumNum[request.form["input_list_" + str(i)]].value-2]=True
+                print( bool)
                 if bool[1]==True or bool[3]==True:
                     diff=-diff;
                 if bool[0]== True or bool[1] == True:
@@ -163,7 +166,76 @@ def form_change_num():
                 flash("需要选择操作类型")
         else:
             flash('需要填写一个正数')
-    return redirect(url_for('ctr.show_materials'))
+    return redirect(url_for('ctr.show_materials',page=page,alarm_level=alarm_level))
+
+
+@ctr.route("/text_color_change", methods=['GET', 'POST'])
+@loggedin_required
+def change_text_color():
+    if request.method=="POST":
+        alarm_level=convert_str_num(request.form['input_change_color'])
+        if alarm_level>0:
+            return redirect(url_for('ctr.show_materials',page=1,alarm_level=alarm_level))
+        flash("警戒值错误")
+    flash("提交错误")
+    return redirect(url_for('ctr.show_materials',page= 1, alarm_level=0))
+
+# @ctr.route('/forms_list', methods=['GET', ''])
+# def list_forms():
+#     form=ListForm()
+#     if len(form.listopr)==0:
+#         for i in range(0,Config.FLASK_NUM_PER_PAGE):
+#             oneopr=OprForm()
+#             oneopr.diff=0
+#             form.listopr.append_entry(oneopr)
+#         # for i in range(3, 5):
+#         #     form.listopr[i].diff=i
+#     return render_template("form_list.html",form=form)
+#
+# @ctr.route('/get_opr',methods=['', 'POST'])
+# def get_opr():
+#     form=ListForm()
+#     # if form.validate_on_submit():
+#     diff=form.listopr[0].diff.data
+#     operation=form.listopr[0].operation.data
+#     hide=form.listopr[0].hide.data
+#     print("********************")
+#     print(diff)
+#     print(operation)
+#     print(hide)
+#     return redirect(url_for("ctr.list_forms"))
+# @ctr.route('/_change_num_opr', methods=['GET', 'POST'])
+# @loggedin_required
+# def form_change_num():
+#     materialid=0
+#     if request.method=="POST":
+#         for i in range(1,Config.FLASK_NUM_PER_PAGE+1):
+#             diff=convert_str_num(request.form["input_text_"+str(i)])
+#             if diff > 0:
+#                 materialid=request.form["input_hidden_" + str(i)]
+#                 break
+#         if diff > 0:
+#             # print(request.form["radio"])
+#             bool=[False,False,False,False]
+#             # print("radio" in request.form)
+#             if("radio" in request.form):
+#                 bool[int(request.form["radio"])]=True
+#                 # print( bool)
+#                 if bool[1]==True or bool[3]==True:
+#                     diff=-diff;
+#                 if bool[0]== True or bool[1] == True:
+#                     if change_countnum(materialid,diff):
+#                         flash('库存数量更新成功')
+#                 elif bool[2]==True or bool[3]==True:
+#                     if change_reworknum(materialid,diff):
+#                         flash('返修数量更新成功')
+#                 else:
+#                     flash("需要选择操作类型")
+#             else:
+#                 flash("需要选择操作类型")
+#         else:
+#             flash('需要填写一个正数')
+#     return redirect(url_for('ctr.show_materials'))
 
 # if "input_inbound" in request.form:
 #     bool[0]= request.form["input_inbound"]
@@ -241,7 +313,7 @@ def form_change_num():
 #     if form.validate_on_submit():
 #         m = Material.query.filter_by(material_id=materialid).first()
 #         if m.isvalid_rework_opr(form.diff.data):
-#             oprtype = oprenum[Oprenum.RESTORE] if form.diff.data > 0 else oprenum[Oprenum.REWORKING]
+#             oprtype = oprenum[Oprenum.RESTORE] if form.diff.data > 0 else oprenum[Oprenum.REWORK]
 #             o = Opr(material_id=materialid, diff=form.diff.data, user_id=session['userid'], oprtype=oprtype, \
 #                     momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 #             db.session.add(o)

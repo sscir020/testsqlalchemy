@@ -3,51 +3,64 @@
 
 {% block page_content %}
 <div>
+    <form action="{{ url_for('ctr.change_text_color') }}" method="post">
+        警戒值<input type="text" name="input_change_color" value="{{alarm_level}}">
+        <input type="submit">
+    </form>
     <!--<h1>库存列表</h1>-->
-    <form action="{{ url_for('ctr.form_change_num') }}" method="post">
+    <form action="{{ url_for('ctr.form_change_num',page=page,alarm_level=alarm_level) }}" method="post">
 
-        <table class="table table-hover" id="tableattr">
+        <table class="table table-hover" id="table_material">
              <thead>
                  <th>库存ID</th>
                  <th>库存名</th>
                  <th>参数</th>
                  <th>库存数量</th>
                  <th>返修中数量</th>
-                 <th>
-                    <input type="radio" name="radio"  id="select1" checked value="0" aria-checked="false">入库
-                    <input type="radio" name="radio"  id="select2" checked value="1" aria-checked="false">出库
-                    <input type="radio" name="radio"  id="select3" checked value="2" aria-checked="false">修好
-                    <input type="radio" name="radio"  id="select4"  checked value="3" checked=""  >返修
-                 </th>
+                 <th>购买中数量</th>
+                 <th>操作</th>
              </thead>
 
              {% for entry in materials %}
-
              <tr id="tr_entry">
                  <td>{{entry.material_id}}</td>
                  <td>{{entry.material_name}}</td>
                  <td>{{Param[entry.paramtype].value}}</td>
-                 <td>{{entry.countnum}}</td>
-                 <td>{{entry.reworknum}}</td>
                  <td>
+                     {% if entry.countnum < alarm_level|int  %}
+                     <p  style="color:red">{{entry.countnum}}</p>
+                     {% else %}
+                     <p> {{entry.countnum}}</p>
+                     {% endif %}
+                 </td>
+                 <td>{{entry.reworknum}}</td>
+                 <td></td>
+                 <td>
+                     <input id="numcls1"  name="input_text_{{loop.index}}" type="text">
+                     <input id="numcls2"  name="input_list_{{loop.index}}"  list="operations" />
+                         <datalist id="operations">
+                             <option value="入库">
+                             <option value="出库">
+                             <option value="修好">
+                             <option value="返修">
+                             <option value="购买">
+                        </datalist>
                      <input type="hidden" name="input_hidden_{{loop.index}}" value="{{entry.material_id}}">
-                        <input type="text" name="input_text_{{loop.index}}" id="numcls1">
-                        <input name="input_button_{{entry.material_id}}" type="submit" value="操作"></td>
-                 <!--href="{{ url_for('ctr.form_change_num',materialid=entry.material_id) }}" -->
+                     <input name="input_button_{{entry.material_id}}" type="submit" value="操作">
+                 </td>
              </tr>
              {% endfor %}
         </table>
     </form>
+
 </div>
 
 
 {% if pagination %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, 'ctr.show_materials') }}
+    {{ macros.pagination_widget(pagination, 'ctr.show_materials',alarm_level=alarm_level) }}
 </div>
+
 {% endif %}
 {% endblock %}
-
-
-
 

@@ -5,6 +5,7 @@ from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
 from main_config import oprenumCH,Param,Oprenum
+# from .forms import ColorForm
 
 @ctr.route('/')
 @ctr.route('/welcome')
@@ -26,17 +27,32 @@ def log_user_out():
 
 
 
-@ctr.route('/materials_list')
+@ctr.route('/materials_list/<page>/<alarm_level>')
 @loggedin_required
-def show_materials():
+def show_materials(page,alarm_level):
     # print(session)
     flash('库存列表')
-    page = request.args.get('page',1,type=int)
+
+    page=int(page)
+    if page==None:
+        page=1
+    if alarm_level==None:
+        alarm_level=-1
+    page = request.args.get('page',page,type=int)
     pagination = Material.query.order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
     materials=pagination.items
-    print(pagination==None)
-    return render_template('material_table.html',materials=materials,pagination=pagination,Param=Param )
+
+    # form1 = ColorForm()
+    # if form1.validate_on_submit:
+    #     alarm_level = form1.alarm_level.data
+    #     if alarm_level==None or  alarm_level <0:
+    #         alarm_level = 0
+    #         flash("警戒值错误")
+    # flash("提交错误")
+
+    # print(pagination==None)
+    return render_template('material_table.html',materials=materials,pagination=pagination,Param=Param,page=page,alarm_level=alarm_level )
     # return render_template('material_table.html',materials=Material.query.all())
 
 @ctr.route('/rework_materials_list')
@@ -48,7 +64,7 @@ def show_rework_materials():
     pagination = Material.query.filter(Material.reworknum>0).order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
     materials=pagination.items
-    print(pagination==None)
+    # print(pagination==None)
     return render_template('rework_material_table.html',materials=materials,pagination=pagination )
     # return render_template('material_table.html',materials=Material.query.all())
 
