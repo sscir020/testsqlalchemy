@@ -9,16 +9,23 @@ create table users(
 		unique(user_name)
 		);
 
+
+create table accessories(
+        acces_id int not null auto_increment,
+        param_num int not null,
+        param_acces varchar(256) not null,
+        primary key (acces_id)
+);
+
 drop table if EXISTS oprs;
 drop table if exists materials;
-
 create table materials(
 		material_id int not null auto_increment,
 		material_name varchar(64) not null,
 		countnum int not null,
 		reworknum int not null default 0,
 		buynum int not null default 0,
-		paramtype varchar(32) not null default 0,
+		acces_id int not null default 0,
 		primary key (material_id),
 		unique(material_name)
 		);

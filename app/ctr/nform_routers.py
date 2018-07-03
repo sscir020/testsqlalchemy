@@ -26,7 +26,6 @@ def log_user_out():
     return redirect(url_for('ctr.welcome_user'))
 
 
-
 @ctr.route('/materials_table/<page>/<alarm_level>')
 @loggedin_required
 def show_materials(page,alarm_level):
@@ -117,5 +116,10 @@ def rollback_opr():
     return redirect(url_for('ctr.show_join_oprs'))
 
 
+@ctr.route('/_add_opr_get')
+@loggedin_required
+def show_add_material():
+    m=Material.query.filter_by(acces_id=0).order_by(Material.material_id).all()
+    return render_template("_add_opr_form.html",materials=m)
 
 

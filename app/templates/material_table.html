@@ -58,7 +58,7 @@
 {% endif %}
 
 <form action="{{ url_for('ctr.change_text_color') }}" method="post">
-    <input type="text" name="input_change_color" value="{{alarm_level}}">
+    <input type="number" name="input_change_color" value="{{alarm_level}}">
     <input type="submit" value="警戒值">
 </form>
 {% endblock %}

@@ -33,7 +33,7 @@ class Material(db.Model):
     countnum=db.Column(db.Integer,nullable=False)
     reworknum=db.Column(db.Integer,nullable=False,default=0)
     buynum = db.Column(db.Integer, nullable=False, default=0)
-    paramtype=db.Column(db.String(32),nullable=False,default=0)
+    acces_id=db.Column(db.Integer, db.ForeignKey('accessories.acces_id'),default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
     def material_change_countnum(self,diff):
@@ -97,6 +97,13 @@ class Opr(db.Model):
 
     def prt(self):
         print(self.opr_id, self.user_id, self.diff, self.material_id)
+
+class Accessory(db.Model):
+    __tablename__='accessories'
+    acces_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    param_num = db.Column(db.Integer, nullable=False)
+    param_acces = db.Column(db.String(256), nullable=False)
+
 
 # class AnonymousUser(AnonymousUserMixin):
 #     def can(self, permissions):

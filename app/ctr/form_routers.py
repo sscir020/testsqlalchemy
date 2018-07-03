@@ -1,13 +1,14 @@
 from flask import render_template,url_for,redirect,flash,session,request
 # from flask_login import login_user,logout_user,current_user,login_required
 from .forms import LoginForm,AddOprForm#ColorForm#ListForm,OprForm #EditOprForm,EditReworkOprForm #RegistrationForm
-from ..models import Opr,Material,User
+from ..models import Opr,Material,User,Accessory
 from . import ctr
 from ..__init__ import db
 from ..decorators import loggedin_required
 from main_config import Oprenum,Config,Param,params,paramnums,oprenumNum
 
 import datetime
+import json
 
 @ctr.route('/login', methods=['GET', 'POST'])
 def log_user_in():
@@ -35,32 +36,50 @@ def log_user_in():
         flash("需要登录")
     return render_template('login_form.html',form=form)
 
-
-@ctr.route('/_add_opr', methods=['GET', 'POST'])
+@ctr.route('/_add_opr_post', methods=['GET', 'POST'])
 @loggedin_required
 def add_material():
-    form=AddOprForm()
-    if form.validate_on_submit():
-        # if session['userid'] != None:
-        if Material.query.filter_by(material_name=form.materialname.data).first()== None:
-            m=Material(material_name=form.materialname.data, countnum=form.countnum.data,paramtype=Param.PARAM_ZERO.name)
-            db.session.add(m)
-            db.session.commit()
-            m= Material.query.filter_by(material_name=form.materialname.data).first()
-            o=Opr(material_id=m.material_id,diff=form.countnum.data,user_id=session['userid'],oprtype=Oprenum.INITADD.name, \
-                    momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
-            db.session.add(o)
-            db.session.commit()
-            flash('新材料添加成功')
-            return redirect(url_for('ctr.show_materials',page=1,alarm_level=0))
+    if request.method == "POST":
+        materialname=request.form['input_material_name']
+        if materialname!=None and materialname!='':
+        # if 'input_accessory_list' in request.form:
+        #     list=request.form['input_accessory_list']
+        # list1 = request.form
+        # print(list1)
+            if Material.query.filter_by(material_name=materialname).first() == None:
+                dict={}
+                for key1 in request.form.keys():
+                    if key1[0:21]=='input_accessory_check':
+                        # print(key1)
+                        key='input_accessory_num_'+key1[22:]
+                        if(request.form[key]!=0 and request.form[key]!=''):
+                            dict[request.form[key1]]=request.form[key]
+                acces=str(dict)
+                print (str(dict))
+                if(acces!=None and acces!=''):
+                    if Accessory.query.filter_by(param_acces=acces).first()==None:
+                        a = Accessory(param_num=len(dict),param_acces=acces)
+                        db.session.add(a)
+                    else:
+                        a = Accessory.query.filter_by(param_acces=acces).first()
+                    m=Material(material_name=materialname, countnum=0,acces_id=a.acces_id)
+                    db.session.add(m)
+                else:
+                    m = Material(material_name=materialname, countnum=0, acces_id=0)
+                    db.session.add(m)
+                o=Opr(material_id=m.material_id,diff=0,user_id=session['userid'],oprtype=Oprenum.INITADD.name, \
+                        momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
+                db.session.add(o)
+                db.session.commit()
+                flash('新材料添加成功')
+                return redirect(url_for('ctr.show_materials',page=1,alarm_level=0))
+            else:
+                flash('材料名已存在')
         else:
-            flash('材料名已存在')
-        # else:
-        #     flash('Your need logged in')
-        #     return redirect(url_for('ctr.login_user_in'))
+            flash('需要填写材料名称')
     else:
         flash('需要添加新材料')
-    return render_template("_add_opr_form.html", form=form)
+    return redirect(url_for('ctr.show_add_material'))
 
 
 def convert_str_num(num):
@@ -80,16 +99,12 @@ def change_countnum(materialid,diff):
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
-        # print(m.paramtype)
-        # print(list(params[m.paramtype]))
-        # print(len(params[m.paramtype]))
-        # print(list(params[m.paramtype])[1])
-        if m.paramtype!= None and m.paramtype!=Param.PARAM_ZERO.name:
-            for i in range(0,len(params[m.paramtype])):
-                num = list(paramnums[m.paramtype])[i]
-                materialname=list(params[m.paramtype])[i]
+
+        if m.acces_id!= None and m.acces_id!=0:
+            a=Accessory.query.filter_by(acces_id=m.acces_id).first()
+            for materialid,num in a.param_acces:
                 num=num*diff
-                m1=Material.query.filter_by(material_name=materialname).first()
+                m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_opr(num):
                     m1.material_change_countnum(diff=num)
                     o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
@@ -114,12 +129,12 @@ def change_reworknum(materialid,diff):
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
-        if m.paramtype!= None and m.paramtype!=Param.PARAM_ZERO.name:
-            for i in range(0,len(params[m.paramtype])):
-                num = list(paramnums[m.paramtype])[i]
-                materialname=list(params[m.paramtype])[i]
+
+        if m.acces_id!= None and m.acces_id!=0:
+            a=Accessory.query.filter_by(acces_id=m.acces_id).first()
+            for materialid,num in a.param_acces:
                 num=num*diff
-                m1=Material.query.filter_by(material_name=materialname).first()
+                m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_rework_opr(num):
                     m1.material_change_reworknum(diff=num)
                     o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
@@ -142,12 +157,12 @@ def change_buynum(materialid,diff):
         o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
-        if m.paramtype != None and m.paramtype != Param.PARAM_ZERO.name:
-            for i in range(0, len(params[m.paramtype])):
-                num = list(paramnums[m.paramtype])[i]
-                materialname = list(params[m.paramtype])[i]
-                num = num * diff
-                m1 = Material.query.filter_by(material_name=materialname).first()
+
+        if m.acces_id!= None and m.acces_id!=0:
+            a=Accessory.query.filter_by(acces_id=m.acces_id).first()
+            for materialid,num in a.param_acces:
+                num=num*diff
+                m1=Material.query.filter_by(material_id=materialid).first()
                 m1.material_change_buynum(diff=num)
                 o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
                         momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -169,12 +184,12 @@ def form_change_num(page,alarm_level):
                 break
         if diff > 0:
             bool=[False,False,False,False,False]
-            # arr={"入库":1,"出库":2,"修好":3,"返修":4,"购买":5}
+            # input_list={"入库":1,"出库":2,"修好":3,"返修":4,"购买":5}
             if(request.form["input_list_" + str(i)]!='') and request.form["input_list_" + str(i)] in oprenumNum.keys():
-                print(request.form["input_list_" + str(i)])
-                print (oprenumNum[request.form["input_list_" + str(i)]].value)
+                # print(request.form["input_list_" + str(i)])
+                # print (oprenumNum[request.form["input_list_" + str(i)]].value)
                 bool[oprenumNum[request.form["input_list_" + str(i)]].value-2]=True
-                print( bool)
+                # print( bool)
                 if bool[1]==True or bool[3]==True:
                     diff=-diff;
                 if bool[0]== True or bool[1] == True:
@@ -202,7 +217,7 @@ def change_text_color():
         alarm_level=convert_str_num(request.form['input_change_color'])
         if alarm_level>0:
             return redirect(url_for('ctr.show_materials',page=1,alarm_level=alarm_level))
-        flash("警戒值错误")
+        flash("警戒值应大于0")
     flash("提交错误")
     return redirect(url_for('ctr.show_materials',page= 1, alarm_level=0))
 

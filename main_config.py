@@ -97,28 +97,35 @@ class Sensorname(Enum):
 
 
 class Param(Enum):
-    PARAM_EIGHT = 8
-    PARAM_SEVEN = 7
-    PARAM_FIVE = 5
-    PARAM_THREE = 3
-    PARAM_ZERO = 0
+    PARAM_8 = 8
+    PARAM_7 = 7
+    PARAM_5 = 5
+    PARAM_3 = 3
+    PARAM_0 = 0
 
 params = {
-    Param.PARAM_EIGHT.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+    Param.PARAM_8.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
                              Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name, Sensorname.PRESSURE.name],
-    Param.PARAM_SEVEN.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+    Param.PARAM_7.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
                              Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name],
-    Param.PARAM_FIVE.name:  [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name],
-    Param.PARAM_THREE.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name]
+    Param.PARAM_5.name:  [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name],
+    Param.PARAM_3.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name]
 }
 paramnums = {
-    Param.PARAM_EIGHT.name: [1, 1, 1, 1, 1, 1, 1, 1],
-    Param.PARAM_SEVEN.name: [1, 1, 1, 1, 1, 1, 1],
-    Param.PARAM_FIVE.name:  [1, 1, 1, 1, 1],
-    Param.PARAM_THREE.name: [1, 1, 1]
+    Param.PARAM_8.name: [1, 1, 1, 1, 1, 1, 1, 1],
+    Param.PARAM_7.name: [1, 1, 1, 1, 1, 1, 1],
+    Param.PARAM_5.name:  [1, 1, 1, 1, 1],
+    Param.PARAM_3.name: [1, 1, 1]
 }
 
-
+paramdict={
+    Param.PARAM_8.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+                             Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name, Sensorname.PRESSURE.name],
+    Param.PARAM_7.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name,
+                             Sensorname.WINDDIRECTION.name, Sensorname.TEMP.name],
+    Param.PARAM_5.name:  [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name, Sensorname.NOISE.name, Sensorname.WINDSPEED.name],
+    Param.PARAM_3.name: [Sensorname.P25.name, Sensorname.P10.name, Sensorname.TSP.name]
+}
 
 
 
