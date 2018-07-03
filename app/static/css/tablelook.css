@@ -1,10 +1,10 @@
-#table_rework
+#table_rework_buy
 {
 	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
 	width:100%;
 	border-collapse:collapse;
 }
-#table_rework th
+#table_rework_buy th
 {
 	font-size:1.1em;
 	text-align:center;
@@ -14,7 +14,7 @@
 	border-radius: 10px;
 	color:#F0E9E6;
 }
- #table_rework td
+ #table_rework_buy td
  {
 	font-size:1em;
 	border:1px solid #FF9975;
@@ -22,9 +22,7 @@
 	border-radius: 10px;
 	color: #7D7775;
 }
-
-
-#table_material th
+#tableattr th
 {
 	font-size:1.1em;
 	text-align:center;
@@ -35,7 +33,7 @@
 	color:#F0E9E6;
 }
 
- #table_material td
+ #tableattr td
 {
 	font-size:1em;
 	border:1px solid #FF9975;
@@ -43,6 +41,7 @@
 	border-radius: 10px;
 	color: #7D7775;
 }
+
 #table_oprs th
 {
 	font-size:1.1em;
@@ -78,8 +77,4 @@ ul li
 }
 #tr_entry{
 	font-weight:bold;
-}
-#tr_input
-{
-    text-align:right;
 }

@@ -1,5 +1,6 @@
 from .__init__ import db
-from datetime import datetime
+from flask import flash
+# from datetime import datetime
 # from flask_login import UserMixin, AnonymousUserMixin
 
 class User(db.Model):
@@ -31,10 +32,13 @@ class Material(db.Model):
     material_name=db.Column(db.String(64),nullable=False, unique=True, index=True)
     countnum=db.Column(db.Integer,nullable=False)
     reworknum=db.Column(db.Integer,nullable=False,default=0)
+    buynum = db.Column(db.Integer, nullable=False, default=0)
     paramtype=db.Column(db.String(32),nullable=False,default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
     def material_change_countnum(self,diff):
+        if diff>0:
+            self.buynum-=diff
         self.countnum+=diff
         db.session.add(self)
         # db.session.commit()
@@ -47,10 +51,20 @@ class Material(db.Model):
         # db.session.commit()
         return True
 
+    def material_change_buynum(self,diff):
+        self.buynum+=diff
+        db.session.add(self)
+        # db.session.commit()
+        return True
+
     def isvalid_opr(self,diff):
         if diff==0:
             return False
-        if self.countnum+diff < 0:#出库
+        if self.buynum < diff:#入库
+            flash("入库数量大于购买数量")
+            return False
+        if self.countnum < -diff:#出库
+            flash("出库数量大于库存数量")
             return False
         return True
 
@@ -60,14 +74,16 @@ class Material(db.Model):
         # print("=====================")
         if diff==0:
             return False
-        if self.reworknum - diff <0:#修好
+        if self.reworknum  < diff:#修好
+            flash("修好数量大于返修数量")
             return False
-        if self.reworknum - diff > self.countnum+self.reworknum:#返修
+        if  self.countnum < -diff:#返修
+            flash("返修数量大于库存数量")
             return False
         return True
 
     def prt(self):
-        print(self.material_id, self.material_name, self.countnum,self.reworknum)
+        print(self.material_id, self.material_name, self.countnum,self.reworknum,self.buynum)
 
 
 class Opr(db.Model):

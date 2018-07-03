@@ -27,12 +27,11 @@ def log_user_out():
 
 
 
-@ctr.route('/materials_list/<page>/<alarm_level>')
+@ctr.route('/materials_table/<page>/<alarm_level>')
 @loggedin_required
 def show_materials(page,alarm_level):
     # print(session)
-    flash('库存列表')
-
+    # flash('库存列表')
     page=int(page)
     if page==None:
         page=1
@@ -55,23 +54,31 @@ def show_materials(page,alarm_level):
     return render_template('material_table.html',materials=materials,pagination=pagination,Param=Param,page=page,alarm_level=alarm_level )
     # return render_template('material_table.html',materials=Material.query.all())
 
-@ctr.route('/rework_materials_list')
+@ctr.route('/rework_materials_table')
 @loggedin_required
 def show_rework_materials():
-    # print(session)
-    flash('返修列表')
+    # flash('返修列表')
     page = request.args.get('page',1,type=int)
     pagination = Material.query.filter(Material.reworknum>0).order_by(Material.material_id.desc()).\
         paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
     materials=pagination.items
-    # print(pagination==None)
     return render_template('rework_material_table.html',materials=materials,pagination=pagination )
-    # return render_template('material_table.html',materials=Material.query.all())
 
-@ctr.route('/join_oprs_list')
+
+@ctr.route('/buy_materials_table')
+@loggedin_required
+def show_buy_materials():
+    # flash('购买列表')
+    page = request.args.get('page',1,type=int)
+    pagination = Material.query.filter(Material.buynum>0).order_by(Material.material_id.desc()).\
+        paginate(page,per_page=current_app.config['FLASK_NUM_PER_PAGE'],error_out=False)
+    materials=pagination.items
+    return render_template('buy_material_table.html',materials=materials,pagination=pagination )
+
+@ctr.route('/join_oprs_table')
 @loggedin_required
 def show_join_oprs():
-    flash('操作记录')
+    # flash('操作记录')
     # sql1=db.session.query(Opr.opr_id,Opr.diff,User.user_name).join(User,User.user_id==Opr.user_id).all()
     sql = db.session.query(Opr.opr_id, Opr.diff, User.user_name,Material.material_name,Material.material_id,Opr.oprtype,Opr.momentary).join(User, User.user_id == Opr.user_id)\
         .join(Material,Material.material_id==Opr.material_id).order_by(Opr.opr_id.desc())
@@ -89,8 +96,11 @@ def rollback_opr():
     if opr.oprtype==Oprenum.INBOUND.name or opr.oprtype==Oprenum.OUTBOUND.name:
         m.material_change_countnum(-opr.diff)
         db.session.add(m)
-    elif  opr.oprtype==Oprenum.REWORKING.name or opr.oprtype==Oprenum.RESTORE.name:
+    elif  opr.oprtype==Oprenum.REWORK.name or opr.oprtype==Oprenum.RESTORE.name:
         m.material_change_reworknum(-opr.diff)
+        db.session.add(m)
+    elif opr.oprtype==Oprenum.BUYING.name:
+        m.material_change_buynum(-opr.diff)
         db.session.add(m)
     elif opr.oprtype==Oprenum.INITADD.name:
         Opr.query.filter_by(opr_id=opr.opr_id).delete()

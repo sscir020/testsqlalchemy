@@ -35,12 +35,12 @@
 						<li><a href="{{url_for('ctr.log_user_out')}}">退出</a></li>
 					</ul>
 				</li>
-                <li><a href="#" class="divider"></a></li>
+                <li><a href="#" class="divider">|</a></li>
 				<li><a href="{{url_for('ctr.show_materials',page=1,alarm_level=0)}}"> 库存列表</a></li>
 				<li><a href="{{url_for('ctr.add_material')}}">添加新库存</a></li>
-				<li><a href="{{url_for('ctr.show_rework_materials')}}"> 返修列表</a></li>
+				<li><a href="{{url_for('ctr.show_rework_materials')}}"> 返修中列表</a></li>
+				<li><a href="{{url_for('ctr.show_buy_materials')}}"> 购买中列表</a></li>
 				<li><a href="{{url_for('ctr.show_join_oprs')}}">操作记录</a></li>
-
 			</ul>
 		</div>
 	</div>

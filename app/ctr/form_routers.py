@@ -52,7 +52,7 @@ def add_material():
             db.session.add(o)
             db.session.commit()
             flash('新材料添加成功')
-            return redirect(url_for('ctr.show_materials'))
+            return redirect(url_for('ctr.show_materials',page=1,alarm_level=0))
         else:
             flash('材料名已存在')
         # else:
@@ -73,7 +73,7 @@ def change_countnum(materialid,diff):
     if m==None:
         flash("材料名不存在")
     elif m.isvalid_opr(diff)==False:
-        flash("增加或减少的数量超标")
+        flash("数量超标")
     else:
         oprtype = Oprenum.INBOUND.name if diff > 0 else Oprenum.OUTBOUND.name
         m.material_change_countnum(diff)
@@ -107,7 +107,7 @@ def change_reworknum(materialid,diff):
     if m==None:
         flash("材料名不存在")
     elif m.isvalid_rework_opr(diff)==False:
-        flash("增加或减少的数量超标")
+        flash("数量超标")
     else:
         m.material_change_reworknum(diff)
         oprtype = Oprenum.RESTORE.name if diff > 0 else Oprenum.REWORK.name
@@ -132,10 +132,34 @@ def change_reworknum(materialid,diff):
         return True
     return False
 
+def change_buynum(materialid,diff):
+    m = Material.query.filter_by(material_id=materialid).first()
+    if m==None:
+        flash("材料名不存在")
+    else:
+        m.material_change_buynum(diff)
+        oprtype = Oprenum.BUYING.name
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+                momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        db.session.add(o)
+        if m.paramtype != None and m.paramtype != Param.PARAM_ZERO.name:
+            for i in range(0, len(params[m.paramtype])):
+                num = list(paramnums[m.paramtype])[i]
+                materialname = list(params[m.paramtype])[i]
+                num = num * diff
+                m1 = Material.query.filter_by(material_name=materialname).first()
+                m1.material_change_buynum(diff=num)
+                o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                        momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                db.session.add(o)
+        db.session.commit()
+        return True
+    return False
 
 @ctr.route('/_change_num_opr/<page>/<alarm_level>', methods=['GET', 'POST'])
 @loggedin_required
 def form_change_num(page,alarm_level):
+    diff=0
     materialid=0
     if request.method=="POST":
         for i in range(1,Config.FLASK_NUM_PER_PAGE+1):
@@ -144,10 +168,9 @@ def form_change_num(page,alarm_level):
                 materialid=request.form["input_hidden_" + str(i)]
                 break
         if diff > 0:
-
             bool=[False,False,False,False,False]
             # arr={"入库":1,"出库":2,"修好":3,"返修":4,"购买":5}
-            if(request.form["input_list_" + str(i)]!=''):
+            if(request.form["input_list_" + str(i)]!='') and request.form["input_list_" + str(i)] in oprenumNum.keys():
                 print(request.form["input_list_" + str(i)])
                 print (oprenumNum[request.form["input_list_" + str(i)]].value)
                 bool[oprenumNum[request.form["input_list_" + str(i)]].value-2]=True
@@ -160,8 +183,11 @@ def form_change_num(page,alarm_level):
                 elif bool[2]==True or bool[3]==True:
                     if change_reworknum(materialid,diff):
                         flash('返修数量更新成功')
+                elif bool[4]==True:
+                    if change_buynum(materialid,diff):
+                        flash("购买数量更新成功")
                 else:
-                    flash("需要选择操作类型")
+                    flash("错误的操作类型")
             else:
                 flash("需要选择操作类型")
         else:

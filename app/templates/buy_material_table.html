@@ -3,14 +3,13 @@
 
 {% block page_content %}
 <div>
-    <!--<h1>返修库存列表</h1>-->
-    <table class="table table-hover" id="tableattr"><!--table-condensed-->
+    <!--<h1>购买库存列表</h1>-->
+    <table class="table table-hover" id="table_rework_buy"><!--table-condensed-->
          <thead>
              <th>库存ID</th>
              <th>库存名</th>
-             <th>购买数量</th>
+             <th>购买中数量</th>
              <th>库存数量</th>
-             <th>总数</th>
          </thead>
          {% for entry in materials %}
          <tr>
@@ -26,7 +25,7 @@
 
 {% if pagination %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, 'ctr.show_materials') }}
+    {{ macros.pagination_widget(pagination, 'ctr.show_buy_materials') }}
 </div>
 {% endif %}
 {% endblock %}

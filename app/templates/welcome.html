@@ -2,9 +2,9 @@
 
 {% block page_content %}
 {% if session['userid']!= None %}
-<h1>welcome {{session['username']}}</h1>
+<h1>欢迎 {{session['username']}}</h1>
 {% else %}
-<h1>welcome user</h1>
+<h1>欢迎匿名用户</h1>
 {% endif %}
 {% endblock %}
 

@@ -7,21 +7,21 @@
     <table class="table table-hover" id="table_oprs"><!--table-condensed-->
          <thead>
              <th>操作ID</th>
-             <th>用户名</th>
-             <th>操作数量</th>
              <th>库存ID</th>
              <th>库存名</th>
+             <th>操作数量</th>
              <th>操作类型</th>
+             <th>操作用户</th>
              <th>操作时间</th>
          </thead>
          {% for entry in join_oprs %}
          <tr>
              <td>{{entry.opr_id}}</td>
-             <td>{{entry.user_name}}</td>
-             <td>{{entry.diff}}</td>
              <td>{{entry.material_id}}</td>
              <td>{{entry.material_name}}</td>
+             <td>{{entry.diff}}</td>
              <td>{{oprenumCH[entry.oprtype]}}</td>
+              <td>{{entry.user_name}}</td>
              <td>{{entry.momentary}}</td>
          </tr>
          {% endfor %}
