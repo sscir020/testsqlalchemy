@@ -48,25 +48,30 @@ def add_material():
         # print(list1)
             if Material.query.filter_by(material_name=materialname).first() == None:
                 dict={}
-                for key1 in request.form.keys():
-                    if key1[0:21]=='input_accessory_check':
+                for keyid in request.form.keys():
+                    if keyid[0:21]=='input_accessory_check':
                         # print(key1)
-                        key='input_accessory_num_'+key1[22:]
-                        if(request.form[key]!=0 and request.form[key]!=''):
-                            dict[request.form[key1]]=request.form[key]
-                acces=str(dict)
-                print (str(dict))
+                        keynum='input_accessory_num_'+keyid[22:]
+                        if( request.form[keynum]=='' or int(request.form[keynum])<=0 ):
+                            flash("数值应是一个正数")
+                            return redirect(url_for('ctr.show_add_material'))
+                        else:
+                            dict[request.form[keyid]]=request.form[keynum]
+                acces=json.dumps(dict)
+                print (acces)
                 if(acces!=None and acces!=''):
                     if Accessory.query.filter_by(param_acces=acces).first()==None:
                         a = Accessory(param_num=len(dict),param_acces=acces)
                         db.session.add(a)
-                    else:
-                        a = Accessory.query.filter_by(param_acces=acces).first()
+                        db.session.commit()
+                    a = Accessory.query.filter_by(param_acces=acces).first()
                     m=Material(material_name=materialname, countnum=0,acces_id=a.acces_id)
                     db.session.add(m)
                 else:
                     m = Material(material_name=materialname, countnum=0, acces_id=0)
                     db.session.add(m)
+                db.session.commit()
+                m=Material.query.filter_by(material_name=materialname).first()
                 o=Opr(material_id=m.material_id,diff=0,user_id=session['userid'],oprtype=Oprenum.INITADD.name, \
                         momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
                 db.session.add(o)
@@ -102,7 +107,9 @@ def change_countnum(materialid,diff):
 
         if m.acces_id!= None and m.acces_id!=0:
             a=Accessory.query.filter_by(acces_id=m.acces_id).first()
-            for materialid,num in a.param_acces:
+            data=json.loads(a.param_acces)
+            for materialid in data:
+                num=data[materialid]
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_opr(num):
@@ -132,7 +139,9 @@ def change_reworknum(materialid,diff):
 
         if m.acces_id!= None and m.acces_id!=0:
             a=Accessory.query.filter_by(acces_id=m.acces_id).first()
-            for materialid,num in a.param_acces:
+            data=json.loads(a.param_acces)
+            for materialid in data:
+                num=data[materialid]
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_rework_opr(num):
@@ -160,7 +169,14 @@ def change_buynum(materialid,diff):
 
         if m.acces_id!= None and m.acces_id!=0:
             a=Accessory.query.filter_by(acces_id=m.acces_id).first()
-            for materialid,num in a.param_acces:
+            # print(a.param_acces)
+            # data = json.dumps(a.param_acces)
+            data=json.loads(a.param_acces)
+            # print(data)
+            # print(type(data))
+            for materialid in data:
+                num=data[materialid]
+                # print(materialid,num)
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 m1.material_change_buynum(diff=num)

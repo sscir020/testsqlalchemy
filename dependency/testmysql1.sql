@@ -9,7 +9,7 @@ create table users(
 		unique(user_name)
 		);
 
-
+drop table if exists accessories;
 create table accessories(
         acces_id int not null auto_increment,
         param_num int not null,

@@ -21,7 +21,7 @@
              <tr id="tr_entry">
                  <td>{{entry.material_id}}</td>
                  <td>{{entry.material_name}}</td>
-                 <td>{{Param[entry.paramtype].value}}</td>
+                 <td>{{entry.acces_id}}</td>
                  <td>
                      {% if entry.countnum < alarm_level|int  %}
                      <p  style="color:red">{{entry.countnum}}</p>
