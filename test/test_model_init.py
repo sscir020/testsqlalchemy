@@ -1,15 +1,15 @@
-import unittest
-from app.models import *
-from app import create_app,db
-from main_config import Sensorname,Oprenum,Param,params,paramnums
-import datetime
-import json
-class paramTestCase(unittest.TestCase):
-    def test_add(self):
-        brands={'brand3':Param.PARAM_3,'brand5':Param.PARAM_5,'brand7':Param.PARAM_7}
-        app = create_app('development')
-        app.app_context().push()
-        with  app.app_context():
+# import unittest
+# from app.models import *
+# from app import create_app,db
+# from main_config import Sensorname,Oprenum,Param,params,paramnums
+# import datetime
+# import json
+# class paramTestCase(unittest.TestCase):
+#     def test_add(self):
+#         brands={'brand3':Param.PARAM_3,'brand5':Param.PARAM_5,'brand7':Param.PARAM_7}
+#         app = create_app('development')
+#         app.app_context().push()
+#         with  app.app_context():
             # print('***********************')
             # print(list(brands)[0])
             # print(list(brands.values())[0].name)
@@ -40,13 +40,13 @@ class paramTestCase(unittest.TestCase):
 
 
 
-            a= Accessory(param_num=3,param_acces=json.dumps({1:1,2:1,3:1}))
-            db.session.add(a)
-            a = Accessory(param_num=5, param_acces=json.dumps({1: 1, 2: 1, 3: 1,4:1,5:1}))
-            db.session.add(a)
-            a = Accessory(param_num=7, param_acces=json.dumps({1: 1, 2: 1, 3: 1,4:1,5:1,6:1,7:1}))
-            db.session.add(a)
-            db.session.commit()
+            # a= Accessory(param_num=3,param_acces=json.dumps({1:1,2:1,3:1}))
+            # db.session.add(a)
+            # a = Accessory(param_num=5, param_acces=json.dumps({1: 1, 2: 1, 3: 1,4:1,5:1}))
+            # db.session.add(a)
+            # a = Accessory(param_num=7, param_acces=json.dumps({1: 1, 2: 1, 3: 1,4:1,5:1,6:1,7:1}))
+            # db.session.add(a)
+            # db.session.commit()
 
             # for i in range(1, 28):
             #     m = Material(material_name=Sensorname(i).name, countnum=10, reworknum=0)

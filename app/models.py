@@ -36,7 +36,22 @@ class Material(db.Model):
     acces_id=db.Column(db.Integer, db.ForeignKey('accessories.acces_id'),default=0)
     oprs = db.relationship('Opr', backref='materials', lazy='dynamic')
 
+
     def material_change_countnum(self,diff):
+        self.countnum+=diff
+        db.session.add(self)
+        # db.session.commit()
+        return True
+
+    def material_change_buycountnum_rev(self,diff):
+        if diff<0:
+            self.buynum-=diff
+        self.countnum+=diff
+        db.session.add(self)
+        # db.session.commit()
+        return True
+
+    def material_change_buycountnum(self,diff):
         if diff>0:
             self.buynum-=diff
         self.countnum+=diff
@@ -93,6 +108,7 @@ class Opr(db.Model):
     diff = db.Column(db.Integer, nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
     oprtype = db.Column(db.String(32), nullable=False)
+    ismain =db.Column(db.Boolean,nullable=False)
     momentary = db.Column(db.DateTime, index=True)
 
     def prt(self):

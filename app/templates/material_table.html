@@ -10,7 +10,7 @@
              <thead>
                  <th>库存ID</th>
                  <th>库存名</th>
-                 <th>参数</th>
+                 <th>参数模板ID</th>
                  <th>库存数量</th>
                  <th>返修中数量</th>
                  <th>购买中数量</th>
@@ -22,16 +22,14 @@
                  <td>{{entry.material_id}}</td>
                  <td>{{entry.material_name}}</td>
                  <td>{{entry.acces_id}}</td>
-                 <td>
-                     {% if entry.countnum < alarm_level|int  %}
-                     <p  style="color:red">{{entry.countnum}}</p>
-                     {% else %}
-                     <p>{{entry.countnum}}</p>
-                     {% endif %}
-                 </td>
+                 {% if entry.countnum < alarm_level|int  %}
+                 <td  style="color:red">{{entry.countnum}}</td>
+                 {% else %}
+                 <td>{{entry.countnum}}</td>
+                 {% endif %}
                  <td>{{entry.reworknum}}</td>
                  <td>{{entry.buynum}}</td>
-                 <td>
+                 <td><div>
                      <input id="numcls1"  name="input_text_{{loop.index}}" type="text">
                      <input id="numcls2"  name="input_list_{{loop.index}}"  list="operations" >
                          <datalist id="operations">
@@ -43,6 +41,7 @@
                         </datalist>
                      <input type="hidden" name="input_hidden_{{loop.index}}" value="{{entry.material_id}}">
                      <input name="input_button_{{loop.index}}" type="submit" value="操作">
+                     </div>
                  </td>
              </tr>
              {% endfor %}

@@ -41,7 +41,8 @@ def log_user_in():
 def add_material():
     if request.method == "POST":
         materialname=request.form['input_material_name']
-        if materialname!=None and materialname!='':
+        materialnum= int(request.form['input_material_num'])
+        if materialname!=None and materialname!='' and materialnum!='' and int(materialnum)>0:
         # if 'input_accessory_list' in request.form:
         #     list=request.form['input_accessory_list']
         # list1 = request.form
@@ -59,29 +60,42 @@ def add_material():
                             dict[request.form[keyid]]=request.form[keynum]
                 acces=json.dumps(dict)
                 print (acces)
-                if(acces!=None and acces!=''):
+                if(len(dict)>0 ):
                     if Accessory.query.filter_by(param_acces=acces).first()==None:
                         a = Accessory(param_num=len(dict),param_acces=acces)
                         db.session.add(a)
                         db.session.commit()
                     a = Accessory.query.filter_by(param_acces=acces).first()
-                    m=Material(material_name=materialname, countnum=0,acces_id=a.acces_id)
-                    db.session.add(m)
+                    m=Material(material_name=materialname, countnum=materialnum,acces_id=a.acces_id)
                 else:
-                    m = Material(material_name=materialname, countnum=0, acces_id=0)
-                    db.session.add(m)
+                    m = Material(material_name=materialname, countnum=materialnum, acces_id=0)
+                db.session.add(m)
                 db.session.commit()
                 m=Material.query.filter_by(material_name=materialname).first()
-                o=Opr(material_id=m.material_id,diff=0,user_id=session['userid'],oprtype=Oprenum.INITADD.name, \
+                o=Opr(material_id=m.material_id,diff=m.countnum,user_id=session['userid'],oprtype=Oprenum.INITADD.name, ismain=True,\
                         momentary = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") )
                 db.session.add(o)
+
+                if m.acces_id != None and m.acces_id != 0:
+                    a = Accessory.query.filter_by(acces_id=m.acces_id).first()
+                    data = json.loads(a.param_acces)
+                    for materialid in data:
+                        num = int(data[materialid])
+                        num = num * m.countnum
+                        # print('*************************')
+                        # print(num)
+                        m1 = Material.query.filter_by(material_id=materialid).first()
+                        m1.material_change_countnum(diff=num)
+                        o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=Oprenum.INITADD.name,ismain=False, \
+                                momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                        db.session.add(o)
                 db.session.commit()
                 flash('新材料添加成功')
                 return redirect(url_for('ctr.show_materials',page=1,alarm_level=0))
             else:
                 flash('材料名已存在')
         else:
-            flash('需要填写材料名称')
+            flash('需要填写材料名称和数量')
     else:
         flash('需要添加新材料')
     return redirect(url_for('ctr.show_add_material'))
@@ -100,8 +114,8 @@ def change_countnum(materialid,diff):
         flash("数量超标")
     else:
         oprtype = Oprenum.INBOUND.name if diff > 0 else Oprenum.OUTBOUND.name
-        m.material_change_countnum(diff)
-        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+        m.material_change_buycountnum(diff)
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, ismain=True,\
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
 
@@ -109,12 +123,12 @@ def change_countnum(materialid,diff):
             a=Accessory.query.filter_by(acces_id=m.acces_id).first()
             data=json.loads(a.param_acces)
             for materialid in data:
-                num=data[materialid]
+                num=int(data[materialid])
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_opr(num):
-                    m1.material_change_countnum(diff=num)
-                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                    m1.material_change_buycountnum(diff=num)
+                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype,ismain=False, \
                             momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                     db.session.add(o)
                 else:
@@ -133,7 +147,7 @@ def change_reworknum(materialid,diff):
     else:
         m.material_change_reworknum(diff)
         oprtype = Oprenum.RESTORE.name if diff > 0 else Oprenum.REWORK.name
-        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, ismain=True,\
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
 
@@ -141,12 +155,12 @@ def change_reworknum(materialid,diff):
             a=Accessory.query.filter_by(acces_id=m.acces_id).first()
             data=json.loads(a.param_acces)
             for materialid in data:
-                num=data[materialid]
+                num=int(data[materialid])
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 if m1.isvalid_rework_opr(num):
                     m1.material_change_reworknum(diff=num)
-                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                    o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, ismain=False,\
                             momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                     db.session.add(o)
                 else:
@@ -163,7 +177,7 @@ def change_buynum(materialid,diff):
     else:
         m.material_change_buynum(diff)
         oprtype = Oprenum.BUYING.name
-        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, \
+        o = Opr(material_id=materialid, diff=diff, user_id=session['userid'], oprtype=oprtype, ismain=True,\
                 momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         db.session.add(o)
 
@@ -175,12 +189,12 @@ def change_buynum(materialid,diff):
             # print(data)
             # print(type(data))
             for materialid in data:
-                num=data[materialid]
+                num=int(data[materialid])
                 # print(materialid,num)
                 num=num*diff
                 m1=Material.query.filter_by(material_id=materialid).first()
                 m1.material_change_buynum(diff=num)
-                o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype, \
+                o = Opr(material_id=m1.material_id, diff=num, user_id=session['userid'], oprtype=oprtype,ismain=False, \
                         momentary=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 db.session.add(o)
         db.session.commit()

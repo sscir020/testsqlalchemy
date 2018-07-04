@@ -35,6 +35,7 @@ create table oprs(
 		material_id int not null,
 		diff int not null,
 		oprtype varchar(16) not null,
+		ismain tinyint(1) not null,
 		momentary datetime not null default current_timestamp,
 		primary key (opr_id),
 		foreign key (user_id) references users(user_id),
